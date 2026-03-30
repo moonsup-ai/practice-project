@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { track } from '@vercel/analytics';
 
 const CITIES = [
   // 한국 주요 도시
@@ -156,6 +157,11 @@ export default function FortunePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    track('fortune_started', {
+      city: form.city,
+      gender: form.gender,
+      unknown_time: form.unknownTime,
+    });
     const city = CITIES.find(c => c.name === form.city) ?? CITIES[0];
     const params = new URLSearchParams({
       name:   form.name || '익명',

@@ -1,8 +1,9 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { track } from '@vercel/analytics';
 import { calcSaju, calcWesternChart } from '@/lib/astrology';
 import FortuneResult from '@/components/FortuneResult';
 
@@ -77,6 +78,15 @@ export default function ResultContent() {
     saju:    calcSaju(lmtYear, lmtMonth, lmtDay, lmtHour, lmtMinute, gender, jajasi),
     western: calcWesternChart(utYear, utMonth, utDay, utHour, utMinute, lat, lng),
   }), [lmtYear, lmtMonth, lmtDay, lmtHour, lmtMinute, gender, jajasi, utYear, utMonth, utDay, utHour, utMinute, lat, lng]);
+
+  useEffect(() => {
+    track('fortune_completed', {
+      city,
+      gender,
+      zodiac_animal: saju.zodiacAnimal,
+      sun_sign: western.planets['sun']?.sign ?? '',
+    });
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div

@@ -2,11 +2,11 @@
 
 import { useState, useMemo } from 'react';
 import type { SajuResult, WesternChartResult } from '@/lib/astrology';
-import { calcTodaySajuFortune, calcTodayWesternFortune, calc12Unsung, getSipShin, HIDDEN_STEMS, BRANCH_EL, ELEMENTS_KR } from '@/lib/astrology';
+import { calcTodaySajuFortune, calcTodayWesternFortune, calcUnifiedFortune, calc12Unsung, getSipShin, HIDDEN_STEMS, BRANCH_EL, ELEMENTS_KR } from '@/lib/astrology';
 
 // ─── 탭 타입 ─────────────────────────────────────────────────
 
-type Tab = 'saju' | 'western';
+type Tab = 'unified' | 'saju' | 'western';
 
 // ─── 오행 색상 ────────────────────────────────────────────────
 
@@ -215,6 +215,98 @@ function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtOffsetMin: numbe
   );
 }
 
+// ─── 통합 오늘의 운세 탭 ─────────────────────────────────────
+
+const SCORE_COLOR: Record<number, string> = {
+  4: '#f0c97a', 3: '#f0c97a', 2: '#86efac', 1: '#86efac',
+  0: '#e8d5b7', [-1]: '#fca5a5', [-2]: '#fca5a5',
+};
+
+function UnifiedTab({ saju, western, lmtOffsetMin }: { saju: SajuResult; western: WesternChartResult; lmtOffsetMin: number }) {
+  const unified = useMemo(() => calcUnifiedFortune(saju, western, lmtOffsetMin), [saju, western, lmtOffsetMin]);
+  const { sajuToday, westernToday, keyword, advice, score } = unified;
+  const scoreColor = SCORE_COLOR[score] ?? '#e8d5b7';
+
+  return (
+    <div className="space-y-4">
+
+      {/* 종합 키워드 */}
+      <div
+        className="rounded-2xl p-6 text-center"
+        style={{ background: 'rgba(45,19,84,0.5)', border: '1px solid rgba(212,168,83,0.2)' }}
+      >
+        <p className="text-xs tracking-widest mb-3" style={{ color: 'rgba(212,168,83,0.6)' }}>✦ 오늘의 종합 운세 ✦</p>
+        <div
+          className="text-3xl font-bold mb-3 tracking-widest"
+          style={{ color: scoreColor }}
+        >
+          {keyword}
+        </div>
+        {/* 점수 바 */}
+        <div className="flex items-center justify-center gap-1 mb-4">
+          {[-2, -1, 0, 1, 2, 3, 4].map(s => (
+            <div
+              key={s}
+              className="w-6 h-2 rounded-full transition-all"
+              style={{
+                background: s <= score ? scoreColor : 'rgba(212,168,83,0.15)',
+                opacity: s <= score ? 1 : 0.4,
+              }}
+            />
+          ))}
+        </div>
+        <p className="text-sm leading-relaxed" style={{ color: 'rgba(232,213,183,0.8)' }}>
+          {advice}
+        </p>
+      </div>
+
+      {/* 사주 + 서양 각각의 오늘 */}
+      <div className="grid grid-cols-2 gap-3">
+        {/* 사주 */}
+        <div
+          className="rounded-2xl p-4"
+          style={{ background: 'rgba(45,19,84,0.4)', border: '1px solid rgba(212,168,83,0.15)' }}
+        >
+          <p className="text-xs tracking-widest mb-2" style={{ color: 'rgba(212,168,83,0.6)' }}>☯ 사주</p>
+          <p className="text-lg font-bold mb-1" style={{ color: '#e8d5b7' }}>
+            {sajuToday.todayStemKr}{sajuToday.todayBranchKr}일
+          </p>
+          <p className="text-xs font-semibold mb-2" style={{ color: '#f0c97a' }}>{sajuToday.keyword}</p>
+          <p className="text-xs leading-relaxed" style={{ color: 'rgba(232,213,183,0.65)' }}>
+            {sajuToday.summary}
+          </p>
+        </div>
+        {/* 서양 */}
+        <div
+          className="rounded-2xl p-4"
+          style={{ background: 'rgba(45,19,84,0.4)', border: '1px solid rgba(212,168,83,0.15)' }}
+        >
+          <p className="text-xs tracking-widest mb-2" style={{ color: 'rgba(212,168,83,0.6)' }}>✦ 별자리</p>
+          <p className="text-lg font-bold mb-1" style={{ color: '#e8d5b7' }}>
+            ☽ {westernToday.todayMoonSign}
+          </p>
+          <p className="text-xs font-semibold mb-2" style={{ color: '#f0c97a' }}>{westernToday.keyword}</p>
+          <p className="text-xs leading-relaxed" style={{ color: 'rgba(232,213,183,0.65)' }}>
+            {westernToday.summary}
+          </p>
+        </div>
+      </div>
+
+      {/* 오늘의 조합 설명 */}
+      <div
+        className="rounded-2xl p-4"
+        style={{ background: 'rgba(45,19,84,0.3)', border: '1px solid rgba(212,168,83,0.1)' }}
+      >
+        <p className="text-xs mb-2" style={{ color: 'rgba(212,168,83,0.5)' }}>
+          오늘 일진 <span style={{ color: '#e8d5b7' }}>{sajuToday.todayStemKr}{sajuToday.todayBranchKr}</span>
+          {' '}({sajuToday.sipShin}) · 달의 자리 <span style={{ color: '#e8d5b7' }}>{westernToday.todayMoonSign}</span>
+          {' '}({westernToday.keyword}) 를 종합한 결과입니다.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ─── 서양 점성학 탭 ──────────────────────────────────────────
 
 function WesternTab({ western }: { western: WesternChartResult }) {
@@ -358,7 +450,7 @@ interface Props {
 }
 
 export default function FortuneResult({ saju, western, name, city, lmtOffsetMin }: Props) {
-  const [tab, setTab] = useState<Tab>('saju');
+  const [tab, setTab] = useState<Tab>('unified');
 
   const { input } = saju;
   const dateStr = `${input.year}년 ${input.month}월 ${input.day}일 ${input.hour}시 ${input.minute}분`;
@@ -398,7 +490,8 @@ export default function FortuneResult({ saju, western, name, city, lmtOffsetMin 
         style={{ background: 'rgba(45,19,84,0.5)', border: '1px solid rgba(212,168,83,0.15)' }}
       >
         {[
-          { key: 'saju' as Tab,    label: '사주팔자', icon: '☯' },
+          { key: 'unified' as Tab, label: '오늘의 운세', icon: '◈' },
+          { key: 'saju' as Tab,    label: '사주팔자',   icon: '☯' },
           { key: 'western' as Tab, label: '서양 점성학', icon: '✦' },
         ].map(t => (
           <button
@@ -417,6 +510,7 @@ export default function FortuneResult({ saju, western, name, city, lmtOffsetMin 
       </div>
 
       {/* 탭 콘텐츠 */}
+      {tab === 'unified' && <UnifiedTab saju={saju} western={western} lmtOffsetMin={lmtOffsetMin} />}
       {tab === 'saju'    && <SajuTab    saju={saju} lmtOffsetMin={lmtOffsetMin} />}
       {tab === 'western' && <WesternTab western={western} />}
     </div>

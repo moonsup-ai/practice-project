@@ -1113,6 +1113,7 @@ export function calcTodayWesternFortune(western: WesternChartResult): {
   summary: string;
   todayMoonSign: string;
   sunSign: string;
+  moonSunDiff: number;
 } {
   const ZODIAC_SIGNS_KR_LIST = ['양자리','황소자리','쌍둥이자리','게자리','사자자리','처녀자리',
     '천칭자리','전갈자리','사수자리','염소자리','물병자리','물고기자리'];
@@ -1128,5 +1129,47 @@ export function calcTodayWesternFortune(western: WesternChartResult): {
     ...fortune,
     todayMoonSign: ZODIAC_SIGNS_KR_LIST[todayMoonSignIdx],
     sunSign: western.planets['sun']?.sign ?? '',
+    moonSunDiff: diff,
   };
+}
+
+// ─── 통합 오늘의 운세 ─────────────────────────────────────────
+
+// 사주 십신 점수: 吉(2) / 중(1) / 평(0) / 흉(-1)
+const SIPSHIN_SCORE: Record<string, number> = {
+  '식신': 2, '정재': 2, '정인': 2,
+  '비견': 1, '정관': 1, '편재': 1,
+  '겁재': 0, '상관': 0, '편인': 0,
+  '편관': -1,
+};
+// 서양 달-태양 거리 점수 (0~11)
+const MOON_SUN_SCORE = [2, 1, 2, 1, 2, 0, -1, 0, 0, 2, 1, 0];
+
+const UNIFIED_TABLE: Record<number, { keyword: string; advice: string }> = {
+  4:  { keyword: '대길(大吉)', advice: '사주와 별자리 모두 오늘을 강하게 지지합니다. 중요한 결정이나 새로운 시작에 최적의 날입니다. 평소 미뤄두었던 일을 과감히 실행하세요.' },
+  3:  { keyword: '길(吉)',    advice: '두 흐름이 조화롭게 맞물립니다. 계획한 일을 실행에 옮기기 좋고, 사람과의 만남에서도 긍정적인 에너지가 오갑니다.' },
+  2:  { keyword: '소길(小吉)', advice: '전반적으로 순탄한 흐름입니다. 한 쪽이 힘을 보태고 있으니 무리하지 않고 꾸준히 나아가면 좋은 결과가 따릅니다.' },
+  1:  { keyword: '평길(平吉)', advice: '크게 나쁘지 않은 하루입니다. 작은 일부터 차근차근 처리하며 긍정적인 흐름을 유지하세요.' },
+  0:  { keyword: '평(平)',    advice: '사주와 별자리 모두 중립적인 에너지입니다. 평소 루틴을 지키며 내면을 돌보는 하루를 보내세요.' },
+  [-1]: { keyword: '소주의',  advice: '한쪽에서 긴장이 감지됩니다. 신중하게 행동하고 중요한 결정은 내일로 미루는 것이 좋습니다.' },
+  [-2]: { keyword: '신중',    advice: '두 흐름 모두 도전적인 에너지입니다. 오늘은 현상 유지에 집중하고 새로운 시도는 삼가세요. 충분한 휴식이 최선입니다.' },
+};
+
+export function calcUnifiedFortune(
+  saju: SajuResult,
+  western: WesternChartResult,
+  lmtOffsetMin: number = 0,
+): {
+  keyword: string;
+  advice: string;
+  score: number;
+  sajuToday: ReturnType<typeof calcTodaySajuFortune>;
+  westernToday: ReturnType<typeof calcTodayWesternFortune>;
+} {
+  const sajuToday    = calcTodaySajuFortune(saju, lmtOffsetMin);
+  const westernToday = calcTodayWesternFortune(western);
+  const score = Math.min(2, Math.max(-1, SIPSHIN_SCORE[sajuToday.sipShin] ?? 0))
+              + Math.min(2, Math.max(-1, MOON_SUN_SCORE[westernToday.moonSunDiff] ?? 0));
+  const { keyword, advice } = UNIFIED_TABLE[score] ?? UNIFIED_TABLE[0];
+  return { keyword, advice, score, sajuToday, westernToday };
 }
