@@ -8,6 +8,8 @@ import { calcSaju, calcWesternChart } from '@/lib/astrology';
 import FortuneResult from '@/components/FortuneResult';
 import { useLang } from '@/lib/lang';
 import { t } from '@/lib/translations';
+// NEW: import the synthesis function
+import { synthesize } from '@/lib/synthesis/synthesis';
 
 export default function ResultContent() {
   const searchParams = useSearchParams();
@@ -83,6 +85,16 @@ export default function ResultContent() {
     western: calcWesternChart(utYear, utMonth, utDay, utHour, utMinute, lat, lng),
   }), [lmtYear, lmtMonth, lmtDay, lmtHour, lmtMinute, gender, jajasi, utYear, utMonth, utDay, utHour, utMinute, lat, lng]);
 
+  // NEW: run the synthesis using the same birth data already in this component.
+  // lang comes from useLang() above — no extra wiring needed.
+  // hour/minute are already 12/0 when the user chose "unknown time" (handled by the form page).
+  // This re-runs only when birth data or language changes.
+  const synthesis = useMemo(() => synthesize({
+    year, month, day, hour, minute,
+    timezone: 'Asia/Seoul',  // the app always works in KST
+    language: lang,          // ← the only new piece — comes from useLang()
+  }), [year, month, day, hour, minute, lang]);
+
   useEffect(() => {
     track('fortune_completed', {
       city,
@@ -122,6 +134,79 @@ export default function ResultContent() {
       {/* 결과 */}
       <main className="flex-1">
         <FortuneResult saju={saju} western={western} name={name} city={city} lmtOffsetMin={lmtOffsetMin} />
+
+        {/*
+          ─── SYNTHESIS READING SECTION ─────────────────────────────────
+          What: Shows the 5-field integrated reading from the synthesis module.
+          Why here: `synthesis` is already computed above with useMemo(), so
+                    we can just read synthesis.interpretation directly — no extra
+                    props or state needed.
+          Layout: Same max-w-lg / px-4 as FortuneResult so columns line up.
+          Styling: Matches the project's inline-style pattern (gold + dark).
+          ────────────────────────────────────────────────────────────────
+        */}
+        <div className="max-w-lg mx-auto w-full px-4 pb-16">
+          <div
+            className="rounded-2xl p-5"
+            style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,168,83,0.15)' }}
+          >
+            {/* Section title — gold, small, matches other tab headings */}
+            <h3 className="text-sm font-semibold mb-4" style={{ color: '#d4a853' }}>
+              {lang === 'ko' ? '✦ 통합 운세' : '✦ Synthesis Reading'}
+            </h3>
+
+            {/*
+              FIELD 1: summary
+              One sentence capturing today's overall energy.
+              Displayed larger so it reads as the "headline" of the section.
+            */}
+            <p className="text-sm font-medium mb-5 leading-relaxed" style={{ color: '#e8d5b7' }}>
+              {synthesis.interpretation.summary}
+            </p>
+
+            {/*
+              FIELDS 2–5: corePersonality, workStyle, relationshipStyle, practicalAdvice
+              Each rendered as a labelled paragraph.
+              The array + .map() keeps the JSX concise — adding a new field
+              in the future is just one more object in the array.
+            */}
+            {(
+              [
+                {
+                  label: lang === 'ko' ? '핵심 성격' : 'Core Personality',
+                  text: synthesis.interpretation.corePersonality,
+                },
+                {
+                  label: lang === 'ko' ? '업무 스타일' : 'Work Style',
+                  text: synthesis.interpretation.workStyle,
+                },
+                {
+                  label: lang === 'ko' ? '관계 스타일' : 'Relationship Style',
+                  text: synthesis.interpretation.relationshipStyle,
+                },
+                {
+                  label: lang === 'ko' ? '오늘의 조언' : 'Practical Advice',
+                  text: synthesis.interpretation.practicalAdvice,
+                },
+              ] as { label: string; text: string }[]
+            ).map(({ label, text }) => (
+              /*
+                key={label} is safe here because the labels are unique
+                and the array never reorders at runtime.
+              */
+              <div key={label} className="mb-4 last:mb-0">
+                {/* Muted gold label above each paragraph */}
+                <p className="text-xs mb-1" style={{ color: 'rgba(212,168,83,0.65)' }}>
+                  {label}
+                </p>
+                {/* Body text — slightly muted cream so it doesn't compete with the label */}
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(232,213,183,0.8)' }}>
+                  {text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </main>
     </div>
   );
