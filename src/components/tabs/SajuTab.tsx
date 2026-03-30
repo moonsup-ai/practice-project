@@ -1,0 +1,200 @@
+'use client';
+
+import { useState, useMemo } from 'react';
+import type { SajuResult } from '@/lib/astrology';
+import { calcTodaySajuFortune, calc12Unsung, getSipShin, HIDDEN_STEMS, BRANCH_EL, ELEMENTS_KR } from '@/lib/astrology';
+import { useLang } from '@/lib/lang';
+import { t } from '@/lib/translations';
+
+const ELEMENT_COLOR: Record<string, { text: string; bg: string }> = {
+  木: { text: '#86efac', bg: 'rgba(34,197,94,0.15)' },
+  火: { text: '#fca5a5', bg: 'rgba(239,68,68,0.15)'  },
+  土: { text: '#fcd34d', bg: 'rgba(234,179,8,0.15)'  },
+  金: { text: '#e2e8f0', bg: 'rgba(148,163,184,0.15)'},
+  水: { text: '#93c5fd', bg: 'rgba(59,130,246,0.15)' },
+};
+
+const ELEMENT_KR_COLOR: Record<string, string> = {
+  목: '#86efac', 화: '#fca5a5', 토: '#fcd34d', 금: '#e2e8f0', 수: '#93c5fd',
+};
+
+export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtOffsetMin: number }) {
+  const { lang } = useLang();
+  const s = t.saju;
+
+  const pillars = [
+    { label: s.pillarLabels.hour[lang],  p: saju.hour  },
+    { label: s.pillarLabels.day[lang],   p: saju.day   },
+    { label: s.pillarLabels.month[lang], p: saju.month },
+    { label: s.pillarLabels.year[lang],  p: saju.year  },
+  ];
+
+  const elements = Object.entries(saju.elementCount);
+  const maxCount = Math.max(...elements.map(([, v]) => v));
+  const today = useMemo(() => calcTodaySajuFortune(saju, lmtOffsetMin), [saju, lmtOffsetMin]);
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="space-y-4">
+
+      {/* 오늘의 운세 */}
+      <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(212,168,83,0.3)', background: 'rgba(45,19,84,0.6)' }}>
+        <div className="px-5 pt-5 pb-4">
+          <p className="text-xs tracking-widest mb-3" style={{ color: '#d4a853' }}>{s.todayTitle[lang]}</p>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-1.5 text-lg font-bold" style={{ color: '#f0c97a' }}>
+              <span>{today.todayStemKr}{today.todayBranchKr}</span>
+              <span className="text-sm font-normal" style={{ color: 'rgba(232,213,183,0.45)' }}>{s.dayUnit[lang]}</span>
+            </div>
+            <div className="px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ background: 'rgba(212,168,83,0.15)', border: '1px solid rgba(212,168,83,0.3)', color: '#f0c97a' }}>
+              {today.sipShin} · {today.keyword}
+            </div>
+          </div>
+          <p className="text-sm leading-relaxed" style={{ color: '#e8d5b7' }}>{today.summary}</p>
+        </div>
+        <button
+          onClick={() => setOpen(v => !v)}
+          className="w-full flex items-center justify-center gap-1.5 py-3 text-xs transition-colors"
+          style={{ borderTop: '1px solid rgba(212,168,83,0.15)', color: 'rgba(232,213,183,0.5)' }}
+        >
+          {open ? s.collapseBtn[lang] : s.expandBtn[lang]}
+        </button>
+      </div>
+
+      {/* 상세 내용 */}
+      {open && <div className="space-y-6">
+
+      {/* 일간 요약 */}
+      <div
+        className="rounded-2xl p-5 flex items-center gap-5"
+        style={{ background: 'rgba(45,19,84,0.5)', border: '1px solid rgba(212,168,83,0.25)' }}
+      >
+        <div
+          className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-bold shrink-0"
+          style={{
+            background: `${ELEMENT_KR_COLOR[saju.dayMaster.elementKr]}22`,
+            border: `1px solid ${ELEMENT_KR_COLOR[saju.dayMaster.elementKr]}44`,
+            color: ELEMENT_KR_COLOR[saju.dayMaster.elementKr],
+          }}
+        >
+          {saju.day.stemKr}
+        </div>
+        <div>
+          <p className="text-xs mb-1" style={{ color: 'rgba(232,213,183,0.55)' }}>{s.dayMasterNote[lang]}</p>
+          <p className="font-bold text-lg" style={{ color: '#e8d5b7' }}>
+            {saju.dayMaster.yinYang} {saju.dayMaster.elementKr}({saju.day.stem}) · {saju.zodiacAnimal}{s.zodiac[lang]}
+          </p>
+          <p className="text-sm" style={{ color: 'rgba(232,213,183,0.6)' }}>
+            {s.dominant[lang]} {saju.dominantElement} · {s.lacking[lang]} {saju.lackingElement}
+          </p>
+        </div>
+      </div>
+
+      {/* 사주 4주 테이블 */}
+      <div>
+        <p className="text-xs tracking-widest mb-3" style={{ color: '#d4a853' }}>{s.pillarsTitle[lang]}</p>
+        <div className="grid grid-cols-4 gap-2">
+          {pillars.map(({ label, p }) => {
+            const dmIdx = saju.dayMaster.stemIndex;
+            const branchElKr = ELEMENTS_KR[BRANCH_EL[p.branchIndex]];
+            const branchColor = ELEMENT_KR_COLOR[branchElKr] ?? '#e8d5b7';
+            const hiddenLen = HIDDEN_STEMS[p.branchIndex].length;
+            const branchSipShin = p.sipShin !== undefined
+              ? getSipShin(dmIdx, HIDDEN_STEMS[p.branchIndex][hiddenLen - 1])
+              : undefined;
+            const unsung = calc12Unsung(dmIdx, p.branchIndex);
+            return (
+              <div key={label} className="glass-card rounded-xl overflow-hidden">
+                {/* 기둥 제목 */}
+                <div className="py-2 text-center text-xs" style={{ color: 'rgba(212,168,83,0.7)', borderBottom: '1px solid rgba(212,168,83,0.15)' }}>
+                  {label.split('\n').map((l, i) => <div key={i}>{l}</div>)}
+                </div>
+                {/* 천간 십신 */}
+                <div className="py-1 text-center text-xs" style={{ color: p.sipShin ? 'rgba(232,213,183,0.55)' : 'transparent', borderBottom: '1px solid rgba(212,168,83,0.1)' }}>
+                  {p.sipShin ?? '●'}
+                </div>
+                {/* 천간 */}
+                <div className="py-3 text-center">
+                  <div className="text-2xl font-bold" style={{ color: ELEMENT_KR_COLOR[p.elementKr] ?? '#e8d5b7' }}>
+                    {p.stem}
+                  </div>
+                  <div className="text-xs mt-0.5" style={{ color: 'rgba(232,213,183,0.5)' }}>{p.stemKr}</div>
+                </div>
+                {/* 지지 */}
+                <div className="py-3 text-center" style={{ borderTop: '1px solid rgba(212,168,83,0.1)' }}>
+                  <div className="text-2xl font-bold" style={{ color: branchColor }}>{p.branch}</div>
+                  <div className="text-xs mt-0.5" style={{ color: 'rgba(232,213,183,0.5)' }}>{p.branchKr}</div>
+                </div>
+                {/* 지장간 */}
+                <div className="py-1.5 text-center" style={{ borderTop: '1px solid rgba(212,168,83,0.1)', background: 'rgba(0,0,0,0.15)' }}>
+                  <div className="text-xs" style={{ color: 'rgba(232,213,183,0.45)' }}>
+                    {p.hiddenStems.map(h => h.stemKr).join(' ')}
+                  </div>
+                </div>
+                {/* 지지십신 + 십이운성 */}
+                <div className="py-1.5 text-center" style={{ borderTop: '1px solid rgba(212,168,83,0.08)', background: 'rgba(0,0,0,0.2)' }}>
+                  {branchSipShin && (
+                    <div className="text-xs mb-0.5" style={{ color: 'rgba(232,213,183,0.5)' }}>{branchSipShin}</div>
+                  )}
+                  <div className="text-xs font-medium" style={{ color: 'rgba(212,168,83,0.7)' }}>{unsung}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {/* 범례 */}
+        <div className="flex gap-4 mt-3 flex-wrap">
+          <span className="text-xs" style={{ color: 'rgba(232,213,183,0.35)' }}>{s.pillarsLegend[lang]}</span>
+        </div>
+      </div>
+
+      {/* 오행 분포 */}
+      <div>
+        <p className="text-xs tracking-widest mb-3" style={{ color: '#d4a853' }}>{s.elementsTitle[lang]}</p>
+        <div className="glass-card rounded-2xl p-5 space-y-3">
+          {elements.map(([el, cnt]) => {
+            const col = ELEMENT_COLOR[el] ?? { text: '#e8d5b7', bg: 'rgba(255,255,255,0.1)' };
+            const pct = maxCount > 0 ? Math.round((cnt / maxCount) * 100) : 0;
+            return (
+              <div key={el} className="flex items-center gap-3">
+                <div className="w-10 text-center text-sm font-bold" style={{ color: col.text }}>{el}</div>
+                <div className="flex-1 rounded-full h-3 overflow-hidden" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                  <div
+                    className="h-full rounded-full transition-all duration-700"
+                    style={{ width: `${pct}%`, background: col.text, opacity: 0.8 }}
+                  />
+                </div>
+                <div className="w-6 text-right text-sm font-bold" style={{ color: col.text }}>{cnt}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 대운 */}
+      <div>
+        <p className="text-xs tracking-widest mb-3" style={{ color: '#d4a853' }}>{s.daeunTitle[lang]}</p>
+        <div className="flex gap-2 overflow-x-auto pb-2">
+          {saju.daeun.slice(0, 8).map((d, i) => {
+            const col = ELEMENT_KR_COLOR[d.pillar.elementKr] ?? '#e8d5b7';
+            return (
+              <div
+                key={i}
+                className="shrink-0 glass-card rounded-xl p-3 text-center min-w-[72px]"
+                style={{ border: `1px solid ${col}33` }}
+              >
+                <div className="text-xs mb-1" style={{ color: 'rgba(212,168,83,0.6)' }}>
+                  {d.startAge}~{d.endAge}{s.ageUnit[lang]}
+                </div>
+                <div className="text-xl font-bold" style={{ color: col }}>{d.pillar.stem}</div>
+                <div className="text-xl font-bold" style={{ color: '#e8d5b7' }}>{d.pillar.branch}</div>
+                <div className="text-xs mt-1" style={{ color: 'rgba(232,213,183,0.45)' }}>{d.sipShin}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      </div>}
+    </div>
+  );
+}

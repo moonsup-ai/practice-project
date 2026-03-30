@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { track } from '@vercel/analytics';
+import { useLang } from '@/lib/lang';
+import { t } from '@/lib/translations';
 
 const CITIES = [
   // 한국 주요 도시
@@ -111,6 +113,8 @@ const MINS   = Array.from({ length: 60 }, (_, i) => i);
 
 export default function FortunePage() {
   const router = useRouter();
+  const { lang } = useLang();
+  const f = t.form;
   const [form, setForm] = useState({
     name: '',
     year: 1990, month: 1, day: 1,
@@ -208,21 +212,21 @@ export default function FortunePage() {
 
           {/* 타이틀 */}
           <div className="text-center mb-8">
-            <p className="text-xs tracking-widest mb-2" style={{ color: '#d4a853' }}>✦ 천명 분석 ✦</p>
+            <p className="text-xs tracking-widest mb-2" style={{ color: '#d4a853' }}>{f.badge[lang]}</p>
             <h1 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: '#e8d5b7' }}>
-              당신의 이야기를 들려주세요
+              {f.title[lang]}
             </h1>
             <p className="text-sm" style={{ color: 'rgba(232,213,183,0.55)' }}>
-              사주팔자 + 서양 점성학으로 분석합니다
+              {f.subtitle[lang]}
             </p>
           </div>
 
           {/* 이름 */}
           <div className="glass-card rounded-2xl p-5 space-y-3">
-            <label className="text-xs tracking-widest" style={{ color: '#d4a853' }}>이름 (선택)</label>
+            <label className="text-xs tracking-widest" style={{ color: '#d4a853' }}>{f.name[lang]}</label>
             <input
               type="text"
-              placeholder="홍길동"
+              placeholder={f.namePlaceholder[lang]}
               value={form.name}
               onChange={e => set('name', e.target.value)}
               className="w-full rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-amber-400/50"
@@ -232,16 +236,16 @@ export default function FortunePage() {
 
           {/* 생년월일 */}
           <div className="glass-card rounded-2xl p-5 space-y-3">
-            <label className="text-xs tracking-widest" style={{ color: '#d4a853' }}>생년월일</label>
+            <label className="text-xs tracking-widest" style={{ color: '#d4a853' }}>{f.birthDate[lang]}</label>
             <div className="grid grid-cols-3 gap-3">
               <div className="relative">
                 <select value={form.year} onChange={e => set('year', +e.target.value)} className={selectClass} style={selectStyle}>
-                  {YEARS.map(y => <option key={y} value={y}>{y}년</option>)}
+                  {YEARS.map(y => <option key={y} value={y}>{y}{f.yearSuffix[lang]}</option>)}
                 </select>
               </div>
               <div className="relative">
                 <select value={form.month} onChange={e => set('month', +e.target.value)} className={selectClass} style={selectStyle}>
-                  {MONTHS.map(m => <option key={m} value={m}>{m}월</option>)}
+                  {MONTHS.map(m => <option key={m} value={m}>{lang === 'ko' ? `${m}월` : m}</option>)}
                 </select>
               </div>
               <div className="relative">
@@ -271,7 +275,7 @@ export default function FortunePage() {
           {/* 생시 */}
           <div className="glass-card rounded-2xl p-5 space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs tracking-widest" style={{ color: '#d4a853' }}>출생 시간</label>
+              <label className="text-xs tracking-widest" style={{ color: '#d4a853' }}>{f.birthTime[lang]}</label>
               <label className="flex items-center gap-2 cursor-pointer text-xs" style={{ color: 'rgba(232,213,183,0.6)' }}>
                 <input
                   type="checkbox"
@@ -279,7 +283,7 @@ export default function FortunePage() {
                   onChange={e => set('unknownTime', e.target.checked)}
                   className="accent-amber-400"
                 />
-                시간 모름
+                {f.unknownTime[lang]}
               </label>
             </div>
             {!form.unknownTime && (
@@ -287,7 +291,10 @@ export default function FortunePage() {
                 <select value={form.hour} onChange={e => set('hour', +e.target.value)} className={selectClass} style={selectStyle}>
                   {HOURS.map(h => (
                     <option key={h} value={h}>
-                      {h.toString().padStart(2, '0')}시 ({h < 12 ? '오전' : '오후'} {h === 0 ? 12 : h > 12 ? h - 12 : h}시)
+                      {lang === 'ko'
+                        ? `${h.toString().padStart(2, '0')}시 (${h < 12 ? '오전' : '오후'} ${h === 0 ? 12 : h > 12 ? h - 12 : h}시)`
+                        : `${h.toString().padStart(2, '0')}:00 (${h < 12 ? 'AM' : 'PM'} ${h === 0 ? 12 : h > 12 ? h - 12 : h})`
+                      }
                     </option>
                   ))}
                 </select>
@@ -298,14 +305,14 @@ export default function FortunePage() {
             )}
             {form.unknownTime && (
               <p className="text-xs" style={{ color: 'rgba(232,213,183,0.4)' }}>
-                시간 미상 시 정오(12:00) 기준으로 계산됩니다. 시주(時柱)는 참고용으로만 보세요.
+                {f.unknownNote[lang]}
               </p>
             )}
 
             {/* 야자시/조자시 */}
             {!form.unknownTime && (
               <div className="pt-1">
-                <p className="text-xs mb-2" style={{ color: 'rgba(212,168,83,0.7)' }}>자시(子時) 학파 선택</p>
+                <p className="text-xs mb-2" style={{ color: 'rgba(212,168,83,0.7)' }}>{f.ziHourLabel[lang]}</p>
                 <div className="flex gap-3">
                   {(['야자시', '조자시'] as const).map(opt => (
                     <label key={opt} className="flex items-center gap-2 cursor-pointer">
@@ -326,9 +333,7 @@ export default function FortunePage() {
                   ))}
                 </div>
                 <p className="text-xs mt-1.5" style={{ color: 'rgba(232,213,183,0.35)' }}>
-                  {form.jajasi === '야자시'
-                    ? '야자시: 23시생은 당일 일주 유지'
-                    : '조자시: 23시 이후는 다음날 일주 적용'}
+                  {f.ziHourNote[form.jajasi][lang]}
                 </p>
               </div>
             )}
@@ -336,7 +341,7 @@ export default function FortunePage() {
 
           {/* 성별 */}
           <div className="glass-card rounded-2xl p-5 space-y-3">
-            <label className="text-xs tracking-widest" style={{ color: '#d4a853' }}>성별 (대운 계산 기준)</label>
+            <label className="text-xs tracking-widest" style={{ color: '#d4a853' }}>{f.gender[lang]}</label>
             <div className="flex gap-4">
               {(['남', '여'] as const).map(g => (
                 <label key={g} className="flex items-center gap-2 cursor-pointer">
@@ -351,7 +356,7 @@ export default function FortunePage() {
                   </div>
                   <input type="radio" name="gender" value={g} checked={form.gender === g} onChange={() => set('gender', g)} className="sr-only" />
                   <span className="text-sm" style={{ color: form.gender === g ? '#f0c97a' : 'rgba(232,213,183,0.65)' }}>
-                    {g === '남' ? '남성' : '여성'}
+                    {g === '남' ? f.male[lang] : f.female[lang]}
                   </span>
                 </label>
               ))}
@@ -361,14 +366,14 @@ export default function FortunePage() {
           {/* 출생지 */}
           <div className="glass-card rounded-2xl p-5 space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs tracking-widest" style={{ color: '#d4a853' }}>출생 도시</label>
-              <span className="text-xs" style={{ color: 'rgba(232,213,183,0.4)' }}>서양 점성학 계산에 사용</span>
+              <label className="text-xs tracking-widest" style={{ color: '#d4a853' }}>{f.city[lang]}</label>
+              <span className="text-xs" style={{ color: 'rgba(232,213,183,0.4)' }}>{f.cityNote[lang]}</span>
             </div>
             <div className="relative" ref={cityRef}>
               <input
                 type="text"
                 value={cityQuery}
-                placeholder="도시명 입력 (예: 서울, 부산)"
+                placeholder={f.cityPlaceholder[lang]}
                 autoComplete="off"
                 className={selectClass}
                 style={selectStyle}
@@ -413,7 +418,7 @@ export default function FortunePage() {
                     color: 'rgba(232,213,183,0.5)',
                   }}
                 >
-                  검색 결과 없음
+                  {f.cityNoResult[lang]}
                 </div>
               )}
             </div>
@@ -428,11 +433,11 @@ export default function FortunePage() {
               color: '#0a0510',
             }}
           >
-            ✨ 운명 분석 시작하기
+            {f.submit[lang]}
           </button>
 
           <p className="text-center text-xs" style={{ color: 'rgba(232,213,183,0.35)' }}>
-            모든 계산은 브라우저에서 직접 처리됩니다
+            {f.privacy[lang]}
           </p>
         </form>
       </main>

@@ -6,9 +6,13 @@ import Link from 'next/link';
 import { track } from '@vercel/analytics';
 import { calcSaju, calcWesternChart } from '@/lib/astrology';
 import FortuneResult from '@/components/FortuneResult';
+import { useLang } from '@/lib/lang';
+import { t } from '@/lib/translations';
 
 export default function ResultContent() {
   const searchParams = useSearchParams();
+  const { lang } = useLang();
+  const r = t.result;
 
   const name   = searchParams.get('name')   ?? '익명';
   const year   = Number(searchParams.get('year')   ?? 1990);
@@ -111,7 +115,7 @@ export default function ResultContent() {
             color: 'rgba(232,213,183,0.7)',
           }}
         >
-          ← 다시 분석하기
+          {r.backButton[lang]}
         </Link>
       </header>
 
