@@ -1,13 +1,17 @@
 'use client';
 
-'use client';
-
 import { useState, useMemo } from 'react';
 import type { WesternChartResult } from '@/lib/astrology';
 import { calcTodayWesternFortune } from '@/lib/astrology';
 import { useLang } from '@/lib/lang';
 import { t } from '@/lib/translations';
 import type { Lang } from '@/lib/lang';
+
+const PLANET_NAMES_EN: Record<string, string> = {
+  sun: 'Sun', moon: 'Moon', mercury: 'Mercury', venus: 'Venus', mars: 'Mars',
+  jupiter: 'Jupiter', saturn: 'Saturn', uranus: 'Uranus', neptune: 'Neptune',
+  northNode: 'North Node', southNode: 'South Node',
+};
 
 function moonPhaseName(angle: number, lang: Lang): string {
   const p = t.western.moonPhaseNames;
@@ -38,18 +42,18 @@ export default function WesternTab({ western }: { western: WesternChartResult })
           <div className="flex items-center gap-3 mb-3 flex-wrap">
             <div className="flex items-center gap-1.5">
               <span className="text-xs" style={{ color: 'rgba(232,213,183,0.45)' }}>☀</span>
-              <span className="text-sm font-bold" style={{ color: '#f0c97a' }}>{today.sunSign}</span>
+              <span className="text-sm font-bold" style={{ color: '#f0c97a' }}>{lang === 'ko' ? today.sunSign : today.sunSignEn}</span>
             </div>
             <span style={{ color: 'rgba(232,213,183,0.25)' }}>·</span>
             <div className="flex items-center gap-1.5">
               <span className="text-xs" style={{ color: 'rgba(232,213,183,0.45)' }}>☽</span>
-              <span className="text-sm" style={{ color: 'rgba(232,213,183,0.7)' }}>{today.todayMoonSign}</span>
+              <span className="text-sm" style={{ color: 'rgba(232,213,183,0.7)' }}>{lang === 'ko' ? today.todayMoonSign : today.todayMoonSignEn}</span>
             </div>
             <div className="px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ background: 'rgba(212,168,83,0.15)', border: '1px solid rgba(212,168,83,0.3)', color: '#f0c97a' }}>
-              {today.keyword}
+              {lang === 'ko' ? today.keyword : today.keywordEn}
             </div>
           </div>
-          <p className="text-sm leading-relaxed" style={{ color: '#e8d5b7' }}>{today.summary}</p>
+          <p className="text-sm leading-relaxed" style={{ color: '#e8d5b7' }}>{lang === 'ko' ? today.summary : today.summaryEn}</p>
         </div>
         <button
           onClick={() => setOpen(v => !v)}
@@ -66,8 +70,8 @@ export default function WesternTab({ western }: { western: WesternChartResult })
       {/* ASC / MC / 달 위상 하이라이트 */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: w.ascendant[lang], val: `${western.ascendant.sign} ${western.ascendant.degree}°`, sub: w.ascSub[lang], icon: '⬆' },
-          { label: w.mc[lang],        val: `${western.mc.sign} ${western.mc.degree}°`,               sub: w.mcSub[lang],  icon: '✦' },
+          { label: w.ascendant[lang], val: `${lang === 'ko' ? western.ascendant.sign : western.ascendant.signEn} ${western.ascendant.degree}°`, sub: w.ascSub[lang], icon: '⬆' },
+          { label: w.mc[lang],        val: `${lang === 'ko' ? western.mc.sign : western.mc.signEn} ${western.mc.degree}°`,               sub: w.mcSub[lang],  icon: '✦' },
           { label: w.moonPhase[lang], val: moonPhaseName(western.moonPhaseAngle, lang),               sub: `${western.moonPhaseAngle}°`, icon: '☽' },
         ].map(item => (
           <div key={item.label} className="glass-card rounded-xl p-4 text-center">
@@ -93,9 +97,11 @@ export default function WesternTab({ western }: { western: WesternChartResult })
                 style={{ borderBottom: i < PLANET_ORDER.length - 1 ? '1px solid rgba(212,168,83,0.08)' : 'none' }}
               >
                 <span className="text-lg w-6 text-center" style={{ color: '#d4a853' }}>{p.symbol}</span>
-                <span className="text-sm w-20 font-medium" style={{ color: '#e8d5b7' }}>{p.nameKr}</span>
+                <span className="text-sm w-20 font-medium" style={{ color: '#e8d5b7' }}>
+                  {lang === 'ko' ? p.nameKr : (PLANET_NAMES_EN[p.name] ?? p.name)}
+                </span>
                 <span className="text-sm flex-1" style={{ color: 'rgba(232,213,183,0.7)' }}>
-                  {p.signSymbol} {p.sign}
+                  {p.signSymbol} {lang === 'ko' ? p.sign : p.signEn}
                 </span>
                 <span className="text-sm font-mono" style={{ color: 'rgba(232,213,183,0.55)' }}>
                   {p.degree}° {p.minute.toString().padStart(2, '0')}′
@@ -124,7 +130,10 @@ export default function WesternTab({ western }: { western: WesternChartResult })
               >
                 <span className="text-base w-5 text-center" style={{ color: '#d4a853' }}>{asp.symbol}</span>
                 <span className="text-sm flex-1" style={{ color: '#e8d5b7' }}>
-                  {asp.planet1Kr} {asp.aspectName} {asp.planet2Kr}
+                  {lang === 'ko'
+                    ? `${asp.planet1Kr} ${asp.aspectName} ${asp.planet2Kr}`
+                    : `${PLANET_NAMES_EN[asp.planet1] ?? asp.planet1} ${asp.aspectNameEn} ${PLANET_NAMES_EN[asp.planet2] ?? asp.planet2}`
+                  }
                 </span>
                 <span className="text-xs" style={{ color: 'rgba(232,213,183,0.4)' }}>
                   {asp.angle}° (orb {asp.orb}°)
@@ -142,7 +151,7 @@ export default function WesternTab({ western }: { western: WesternChartResult })
           {western.houses.map(h => (
             <div key={h.house} className="glass-card rounded-xl px-3 py-2.5 flex items-center gap-2">
               <span className="text-xs w-5 font-bold" style={{ color: 'rgba(212,168,83,0.6)' }}>{h.house}</span>
-              <span className="text-sm" style={{ color: '#e8d5b7' }}>{h.sign}</span>
+              <span className="text-sm" style={{ color: '#e8d5b7' }}>{lang === 'ko' ? h.sign : h.signEn}</span>
               <span className="text-xs ml-auto" style={{ color: 'rgba(232,213,183,0.4)' }}>{h.degree}°</span>
             </div>
           ))}

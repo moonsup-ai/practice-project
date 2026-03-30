@@ -16,7 +16,7 @@ export default function Navbar() {
       <div className="flex items-center gap-3">
         <span className="text-2xl">☽</span>
         <span className="text-xl font-bold tracking-widest" style={{ color: '#d4a853' }}>
-          천명술
+          {lang === 'ko' ? '천명술' : 'Cheonmyeongsul'}
         </span>
       </div>
 

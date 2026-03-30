@@ -14,7 +14,7 @@ export default function ResultContent() {
   const { lang } = useLang();
   const r = t.result;
 
-  const name   = searchParams.get('name')   ?? '익명';
+  const name   = searchParams.get('name')   ?? (lang === 'ko' ? '익명' : 'Anonymous');
   const year   = Number(searchParams.get('year')   ?? 1990);
   const month  = Number(searchParams.get('month')  ?? 1);
   const day    = Number(searchParams.get('day')    ?? 1);
@@ -104,7 +104,7 @@ export default function ResultContent() {
       >
         <Link href="/" className="flex items-center gap-3">
           <span className="text-2xl">☽</span>
-          <span className="text-xl font-bold tracking-widest" style={{ color: '#d4a853' }}>천명술</span>
+          <span className="text-xl font-bold tracking-widest" style={{ color: '#d4a853' }}>{lang === 'ko' ? '천명술' : 'Cheonmyeongsul'}</span>
         </Link>
         <Link
           href="/fortune"

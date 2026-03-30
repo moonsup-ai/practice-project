@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import type { SajuResult } from '@/lib/astrology';
-import { calcTodaySajuFortune, calc12Unsung, getSipShin, HIDDEN_STEMS, BRANCH_EL, ELEMENTS_KR } from '@/lib/astrology';
+import { calcTodaySajuFortune, calc12Unsung, getSipShin, HIDDEN_STEMS, BRANCH_EL, ELEMENTS_KR, SIP_SHIN_EN_MAP, UNSUNG_EN_MAP } from '@/lib/astrology';
 import { useLang } from '@/lib/lang';
 import { t } from '@/lib/translations';
 
@@ -16,6 +16,14 @@ const ELEMENT_COLOR: Record<string, { text: string; bg: string }> = {
 
 const ELEMENT_KR_COLOR: Record<string, string> = {
   목: '#86efac', 화: '#fca5a5', 토: '#fcd34d', 금: '#e2e8f0', 수: '#93c5fd',
+};
+
+const ELEMENT_KR_TO_EN: Record<string, string> = {
+  '목':'Wood','화':'Fire','토':'Earth','금':'Metal','수':'Water',
+};
+const ZODIAC_KR_TO_EN: Record<string, string> = {
+  '쥐':'Rat','소':'Ox','호랑이':'Tiger','토끼':'Rabbit','용':'Dragon','뱀':'Snake',
+  '말':'Horse','양':'Goat','원숭이':'Monkey','닭':'Rooster','개':'Dog','돼지':'Pig',
 };
 
 export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtOffsetMin: number }) {
@@ -47,10 +55,10 @@ export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtO
               <span className="text-sm font-normal" style={{ color: 'rgba(232,213,183,0.45)' }}>{s.dayUnit[lang]}</span>
             </div>
             <div className="px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ background: 'rgba(212,168,83,0.15)', border: '1px solid rgba(212,168,83,0.3)', color: '#f0c97a' }}>
-              {today.sipShin} · {today.keyword}
+              {lang === 'ko' ? today.sipShin : today.sipShinEn} · {lang === 'ko' ? today.keyword : today.keywordEn}
             </div>
           </div>
-          <p className="text-sm leading-relaxed" style={{ color: '#e8d5b7' }}>{today.summary}</p>
+          <p className="text-sm leading-relaxed" style={{ color: '#e8d5b7' }}>{lang === 'ko' ? today.summary : today.summaryEn}</p>
         </div>
         <button
           onClick={() => setOpen(v => !v)}
@@ -82,7 +90,10 @@ export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtO
         <div>
           <p className="text-xs mb-1" style={{ color: 'rgba(232,213,183,0.55)' }}>{s.dayMasterNote[lang]}</p>
           <p className="font-bold text-lg" style={{ color: '#e8d5b7' }}>
-            {saju.dayMaster.yinYang} {saju.dayMaster.elementKr}({saju.day.stem}) · {saju.zodiacAnimal}{s.zodiac[lang]}
+            {lang === 'ko'
+              ? `${saju.dayMaster.yinYang} ${saju.dayMaster.elementKr}(${saju.day.stem}) · ${saju.zodiacAnimal}${s.zodiac[lang]}`
+              : `${saju.dayMaster.yinYang === '양' ? 'Yang' : 'Yin'} ${ELEMENT_KR_TO_EN[saju.dayMaster.elementKr] ?? saju.dayMaster.elementKr}(${saju.day.stem}) · ${ZODIAC_KR_TO_EN[saju.zodiacAnimal] ?? saju.zodiacAnimal}${s.zodiac[lang]}`
+            }
           </p>
           <p className="text-sm" style={{ color: 'rgba(232,213,183,0.6)' }}>
             {s.dominant[lang]} {saju.dominantElement} · {s.lacking[lang]} {saju.lackingElement}
@@ -111,7 +122,7 @@ export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtO
                 </div>
                 {/* 천간 십신 */}
                 <div className="py-1 text-center text-xs" style={{ color: p.sipShin ? 'rgba(232,213,183,0.55)' : 'transparent', borderBottom: '1px solid rgba(212,168,83,0.1)' }}>
-                  {p.sipShin ?? '●'}
+                  {p.sipShin ? (lang === 'ko' ? p.sipShin : (SIP_SHIN_EN_MAP[p.sipShin] ?? p.sipShin)) : '●'}
                 </div>
                 {/* 천간 */}
                 <div className="py-3 text-center">
@@ -134,9 +145,13 @@ export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtO
                 {/* 지지십신 + 십이운성 */}
                 <div className="py-1.5 text-center" style={{ borderTop: '1px solid rgba(212,168,83,0.08)', background: 'rgba(0,0,0,0.2)' }}>
                   {branchSipShin && (
-                    <div className="text-xs mb-0.5" style={{ color: 'rgba(232,213,183,0.5)' }}>{branchSipShin}</div>
+                    <div className="text-xs mb-0.5" style={{ color: 'rgba(232,213,183,0.5)' }}>
+                      {lang === 'ko' ? branchSipShin : (SIP_SHIN_EN_MAP[branchSipShin] ?? branchSipShin)}
+                    </div>
                   )}
-                  <div className="text-xs font-medium" style={{ color: 'rgba(212,168,83,0.7)' }}>{unsung}</div>
+                  <div className="text-xs font-medium" style={{ color: 'rgba(212,168,83,0.7)' }}>
+                    {lang === 'ko' ? unsung : (UNSUNG_EN_MAP[unsung] ?? unsung)}
+                  </div>
                 </div>
               </div>
             );
@@ -188,7 +203,9 @@ export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtO
                 </div>
                 <div className="text-xl font-bold" style={{ color: col }}>{d.pillar.stem}</div>
                 <div className="text-xl font-bold" style={{ color: '#e8d5b7' }}>{d.pillar.branch}</div>
-                <div className="text-xs mt-1" style={{ color: 'rgba(232,213,183,0.45)' }}>{d.sipShin}</div>
+                <div className="text-xs mt-1" style={{ color: 'rgba(232,213,183,0.45)' }}>
+                  {lang === 'ko' ? d.sipShin : (SIP_SHIN_EN_MAP[d.sipShin] ?? d.sipShin)}
+                </div>
               </div>
             );
           })}

@@ -13,7 +13,7 @@ const SCORE_COLOR: Record<number, string> = {
 
 export default function UnifiedTab({ saju, western, lmtOffsetMin }: { saju: SajuResult; western: WesternChartResult; lmtOffsetMin: number }) {
   const unified = useMemo(() => calcUnifiedFortune(saju, western, lmtOffsetMin), [saju, western, lmtOffsetMin]);
-  const { sajuToday, westernToday, keyword, advice, score } = unified;
+  const { sajuToday, westernToday, keyword, keywordEn, advice, adviceEn, score } = unified;
   const scoreColor = SCORE_COLOR[score] ?? '#e8d5b7';
   const { lang } = useLang();
   const u = t.unified;
@@ -31,7 +31,7 @@ export default function UnifiedTab({ saju, western, lmtOffsetMin }: { saju: Saju
           className="text-3xl font-bold mb-3 tracking-widest"
           style={{ color: scoreColor }}
         >
-          {keyword}
+          {lang === 'ko' ? keyword : keywordEn}
         </div>
         {/* 점수 바 */}
         <div className="flex items-center justify-center gap-1 mb-4">
@@ -47,7 +47,7 @@ export default function UnifiedTab({ saju, western, lmtOffsetMin }: { saju: Saju
           ))}
         </div>
         <p className="text-sm leading-relaxed" style={{ color: 'rgba(232,213,183,0.8)' }}>
-          {advice}
+          {lang === 'ko' ? advice : adviceEn}
         </p>
       </div>
 
@@ -62,9 +62,9 @@ export default function UnifiedTab({ saju, western, lmtOffsetMin }: { saju: Saju
           <p className="text-lg font-bold mb-1" style={{ color: '#e8d5b7' }}>
             {sajuToday.todayStemKr}{sajuToday.todayBranchKr}{u.dayUnit[lang]}
           </p>
-          <p className="text-xs font-semibold mb-2" style={{ color: '#f0c97a' }}>{sajuToday.keyword}</p>
+          <p className="text-xs font-semibold mb-2" style={{ color: '#f0c97a' }}>{lang === 'ko' ? sajuToday.keyword : sajuToday.keywordEn}</p>
           <p className="text-xs leading-relaxed" style={{ color: 'rgba(232,213,183,0.65)' }}>
-            {sajuToday.summary}
+            {lang === 'ko' ? sajuToday.summary : sajuToday.summaryEn}
           </p>
         </div>
         {/* 서양 */}
@@ -74,11 +74,11 @@ export default function UnifiedTab({ saju, western, lmtOffsetMin }: { saju: Saju
         >
           <p className="text-xs tracking-widest mb-2" style={{ color: 'rgba(212,168,83,0.6)' }}>{u.westernLabel[lang]}</p>
           <p className="text-lg font-bold mb-1" style={{ color: '#e8d5b7' }}>
-            ☽ {westernToday.todayMoonSign}
+            ☽ {lang === 'ko' ? westernToday.todayMoonSign : westernToday.todayMoonSignEn}
           </p>
-          <p className="text-xs font-semibold mb-2" style={{ color: '#f0c97a' }}>{westernToday.keyword}</p>
+          <p className="text-xs font-semibold mb-2" style={{ color: '#f0c97a' }}>{lang === 'ko' ? westernToday.keyword : westernToday.keywordEn}</p>
           <p className="text-xs leading-relaxed" style={{ color: 'rgba(232,213,183,0.65)' }}>
-            {westernToday.summary}
+            {lang === 'ko' ? westernToday.summary : westernToday.summaryEn}
           </p>
         </div>
       </div>
@@ -90,8 +90,8 @@ export default function UnifiedTab({ saju, western, lmtOffsetMin }: { saju: Saju
       >
         <p className="text-xs mb-2" style={{ color: 'rgba(212,168,83,0.5)' }}>
           {u.todayDay[lang]} <span style={{ color: '#e8d5b7' }}>{sajuToday.todayStemKr}{sajuToday.todayBranchKr}</span>
-          {' '}({sajuToday.sipShin}) · {u.moonPos[lang]} <span style={{ color: '#e8d5b7' }}>{westernToday.todayMoonSign}</span>
-          {' '}({westernToday.keyword}) {u.summaryNote[lang]}
+          {' '}({lang === 'ko' ? sajuToday.sipShin : sajuToday.sipShinEn}) · {u.moonPos[lang]} <span style={{ color: '#e8d5b7' }}>{lang === 'ko' ? westernToday.todayMoonSign : westernToday.todayMoonSignEn}</span>
+          {' '}({lang === 'ko' ? westernToday.keyword : westernToday.keywordEn}) {u.summaryNote[lang]}
         </p>
       </div>
     </div>
