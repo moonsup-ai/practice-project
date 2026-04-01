@@ -151,7 +151,7 @@ export default function FortunePage() {
   }, [lang]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
+    const handler = (e: MouseEvent | TouchEvent) => {
       if (cityRef.current && !cityRef.current.contains(e.target as Node)) {
         setShowCityList(false);
         const valid = lang === 'ko'
@@ -164,7 +164,11 @@ export default function FortunePage() {
       }
     };
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    document.addEventListener('touchstart', handler as EventListener);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler as EventListener);
+    };
   }, [cityQuery, form.city, lang]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const set = (key: string, val: unknown) =>
@@ -414,6 +418,7 @@ export default function FortunePage() {
                     <li
                       key={c.name}
                       onMouseDown={() => selectCity(c.name)}
+                      onTouchEnd={e => { e.preventDefault(); selectCity(c.name); }}
                       className="px-4 py-2.5 text-sm cursor-pointer transition-colors"
                       style={{
                         color: form.city === c.name ? '#f0c97a' : '#e8d5b7',

@@ -25,6 +25,11 @@ body {
   overflow-x: hidden;
 }
 
+button, input, select, label {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 @keyframes twinkle {
   0%, 100% { opacity: 0.3; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.3); }
