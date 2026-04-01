@@ -130,9 +130,7 @@ export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtO
             const branchElKr = ELEMENTS_KR[BRANCH_EL[p.branchIndex]];
             const branchColor = ELEMENT_KR_COLOR[branchElKr] ?? '#e8d5b7';
             const hiddenLen = HIDDEN_STEMS[p.branchIndex].length;
-            const branchSipShin = p.sipShin !== undefined
-              ? getSipShin(dmIdx, HIDDEN_STEMS[p.branchIndex][hiddenLen - 1])
-              : undefined;
+            const branchSipShin = getSipShin(dmIdx, HIDDEN_STEMS[p.branchIndex][hiddenLen - 1]);
             const unsung = calc12Unsung(dmIdx, p.branchIndex);
             return (
               <div key={label} className="glass-card rounded-xl overflow-hidden">

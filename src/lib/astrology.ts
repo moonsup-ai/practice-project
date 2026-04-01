@@ -1106,19 +1106,20 @@ const SAMHAP_SAL: Readonly<Record<number, readonly [number, number, number]>> = 
   11: [5, 0, 7],   3:  [5, 0, 7],   7:  [5, 0, 7],
 };
 
-const SINSAL_PILLAR_KR = ['연지', '월지', '시지'];
+const SINSAL_PILLAR_KR = ['연지', '월지', '일지', '시지'];
 
 /**
  * 일주 기준 주요 신살·귀인 계산
  * 천을귀인·문창귀인은 일간, 역마·도화·화개는 일지 삼합 그룹 기준
+ * 모두 연·월·일·시 네 기둥 전체에서 탐색
  */
 export function calcSinSal(saju: SajuResult): SinSal[] {
   const dmIdx = saju.day.stemIndex;
   const dayBi = saju.day.branchIndex;
-  const others = [saju.year.branchIndex, saju.month.branchIndex, saju.hour.branchIndex];
+  const allBranches = [saju.year.branchIndex, saju.month.branchIndex, saju.day.branchIndex, saju.hour.branchIndex];
 
   const findPillars = (targets: readonly number[]): string[] =>
-    others.flatMap((bi, i) => targets.includes(bi) ? [SINSAL_PILLAR_KR[i]] : []);
+    allBranches.flatMap((bi, i) => targets.includes(bi) ? [SINSAL_PILLAR_KR[i]] : []);
 
   const cheonulPillars  = findPillars(CHEONUL_BRANCHES[dmIdx] ?? []);
   const munchangPillars = findPillars([MUNCHANG_BRANCH[dmIdx]]);
