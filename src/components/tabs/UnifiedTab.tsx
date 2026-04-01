@@ -5,6 +5,7 @@ import type { SajuResult, WesternChartResult } from '@/lib/astrology';
 import { calcUnifiedFortune } from '@/lib/astrology';
 import { useLang } from '@/lib/lang';
 import { t } from '@/lib/translations';
+import { synthesize } from '@/lib/synthesis/synthesis';
 
 const SCORE_COLOR: Record<number, string> = {
   4: '#f0c97a', 3: '#f0c97a', 2: '#86efac', 1: '#86efac',
@@ -17,6 +18,13 @@ export default function UnifiedTab({ saju, western, lmtOffsetMin }: { saju: Saju
   const scoreColor = SCORE_COLOR[score] ?? '#e8d5b7';
   const { lang } = useLang();
   const u = t.unified;
+  const { input } = saju;
+  const synthesis = useMemo(() => synthesize({
+    year: input.year, month: input.month, day: input.day,
+    hour: input.hour, minute: input.minute,
+    timezone: 'Asia/Seoul',
+    language: lang,
+  }), [input.year, input.month, input.day, input.hour, input.minute, lang]);
 
   return (
     <div className="space-y-4">
@@ -93,6 +101,30 @@ export default function UnifiedTab({ saju, western, lmtOffsetMin }: { saju: Saju
           {' '}({lang === 'ko' ? sajuToday.sipShin : sajuToday.sipShinEn}) · {u.moonPos[lang]} <span style={{ color: '#e8d5b7' }}>{lang === 'ko' ? westernToday.todayMoonSign : westernToday.todayMoonSignEn}</span>
           {' '}({lang === 'ko' ? westernToday.keyword : westernToday.keywordEn}) {u.summaryNote[lang]}
         </p>
+      </div>
+
+      {/* 통합 운세 (synthesis) */}
+      <div
+        className="rounded-2xl p-5"
+        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(212,168,83,0.15)' }}
+      >
+        <h3 className="text-xs tracking-widest font-semibold mb-4" style={{ color: '#d4a853' }}>
+          {lang === 'ko' ? '✦ 통합 운세' : '✦ Synthesis Reading'}
+        </h3>
+        <p className="text-sm font-medium mb-5 leading-relaxed" style={{ color: '#e8d5b7' }}>
+          {synthesis.interpretation.summary}
+        </p>
+        {([
+          { label: lang === 'ko' ? '핵심 성격' : 'Core Personality', text: synthesis.interpretation.corePersonality },
+          { label: lang === 'ko' ? '업무 스타일' : 'Work Style',      text: synthesis.interpretation.workStyle },
+          { label: lang === 'ko' ? '관계 스타일' : 'Relationship Style', text: synthesis.interpretation.relationshipStyle },
+          { label: lang === 'ko' ? '오늘의 조언' : 'Practical Advice', text: synthesis.interpretation.practicalAdvice },
+        ] as { label: string; text: string }[]).map(({ label, text }) => (
+          <div key={label} className="mb-4 last:mb-0">
+            <p className="text-xs mb-1" style={{ color: 'rgba(212,168,83,0.65)' }}>{label}</p>
+            <p className="text-sm leading-relaxed" style={{ color: 'rgba(232,213,183,0.8)' }}>{text}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

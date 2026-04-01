@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import type { SajuResult } from '@/lib/astrology';
-import { calcTodaySajuFortune, calcSinSal, calc12Unsung, getSipShin, HIDDEN_STEMS, BRANCH_EL, ELEMENTS_KR, SIP_SHIN_EN_MAP, UNSUNG_EN_MAP } from '@/lib/astrology';
+import { calcTodaySajuFortune, calcSinSal, calc12Unsung, getSipShin, HIDDEN_STEMS, BRANCH_EL, ELEMENTS_KR, SIP_SHIN_EN_MAP, UNSUNG_EN_MAP, STEMS_KR } from '@/lib/astrology';
 import { useLang } from '@/lib/lang';
 import { t } from '@/lib/translations';
 
@@ -12,6 +12,39 @@ const ELEMENT_COLOR: Record<string, { text: string; bg: string }> = {
   土: { text: '#fcd34d', bg: 'rgba(234,179,8,0.15)'  },
   金: { text: '#e2e8f0', bg: 'rgba(148,163,184,0.15)'},
   水: { text: '#93c5fd', bg: 'rgba(59,130,246,0.15)' },
+};
+
+const SIP_SHIN_META: Record<string, { emoji: string; color: string; tagKo: string; tagEn: string; descKo: string; descEn: string }> = {
+  비견: { emoji: '⚔️', color: '#fca5a5', tagKo: '자립·경쟁', tagEn: 'Independence',
+    descKo: '나와 같은 기운. 자존심이 강하고 독립적입니다. 내 방식대로 살고 싶어하고 경쟁심이 있습니다.',
+    descEn: 'The same energy as you. Strong self-esteem and independence. Competitive and driven to live on your own terms.' },
+  겁재: { emoji: '🔥', color: '#fb923c', tagKo: '추진·야망', tagEn: 'Ambition',
+    descKo: '나와 비슷하지만 더 강렬한 기운. 강한 추진력과 결단력이 있지만 때로 충동적일 수 있습니다.',
+    descEn: 'Similar to you but more intense. Strong drive and decisiveness, though sometimes impulsive.' },
+  식신: { emoji: '🌱', color: '#86efac', tagKo: '창의·여유', tagEn: 'Creativity',
+    descKo: '내가 편안하게 발산하는 기운. 표현력·창의력이 풍부하고 먹복과 여유로운 분위기가 있습니다.',
+    descEn: 'The energy you freely radiate. Rich creativity and expression, with good fortune in comfort and pleasure.' },
+  상관: { emoji: '🎨', color: '#67e8f9', tagKo: '재능·자유', tagEn: 'Talent',
+    descKo: '내가 강렬하게 발산하는 기운. 뛰어난 재능과 자유로운 기질. 규칙보다 창의적 해결을 선호합니다.',
+    descEn: 'Energy you radiate intensely. Outstanding talent and a free spirit — you prefer creativity over convention.' },
+  편재: { emoji: '💸', color: '#fcd34d', tagKo: '사업·기회', tagEn: 'Business',
+    descKo: '내가 제압하는 이질적 기운. 사업가 기질이 있고 큰 재물을 다루는 배짱이 있습니다.',
+    descEn: 'The force you command and conquer. Entrepreneurial spirit and the boldness to handle big opportunities.' },
+  정재: { emoji: '💰', color: '#f0c97a', tagKo: '안정·성실', tagEn: 'Stability',
+    descKo: '내가 관리하는 동질적 기운. 성실하고 꼼꼼하며 안정적인 수입과 재물을 추구합니다.',
+    descEn: 'The force you steadily manage. Diligent and detail-oriented, you seek stable income and material security.' },
+  편관: { emoji: '⚡', color: '#c4b5fd', tagKo: '카리스마·힘', tagEn: 'Power',
+    descKo: '나를 강하게 압박하는 기운. 강한 카리스마와 도전 정신. 역경을 통해 성장합니다.',
+    descEn: 'The force that pressures and tests you. Strong charisma and competitive drive — you grow through adversity.' },
+  정관: { emoji: '👑', color: '#818cf8', tagKo: '명예·원칙', tagEn: 'Authority',
+    descKo: '나를 올바르게 제어하는 기운. 명예와 원칙을 중시하고 사회적 신뢰와 인정을 추구합니다.',
+    descEn: 'The force that guides you with integrity. You value honor and principle, seeking social recognition and trust.' },
+  편인: { emoji: '🔮', color: '#e879f9', tagKo: '직관·독창', tagEn: 'Intuition',
+    descKo: '나를 독특하게 키우는 기운. 직관력과 독창성. 남다른 시각으로 전문 분야에서 빛을 발합니다.',
+    descEn: 'The force that nurtures your uniqueness. Strong intuition and originality — you shine in specialized fields.' },
+  정인: { emoji: '📖', color: '#a78bfa', tagKo: '학문·지혜', tagEn: 'Wisdom',
+    descKo: '나를 바르게 키우는 기운. 학습 능력이 뛰어나고 스승·귀인의 도움을 자연스럽게 받습니다.',
+    descEn: 'The force that nurtures you with wisdom. Quick learner who naturally attracts mentors and helpful people.' },
 };
 
 const ELEMENT_KR_COLOR: Record<string, string> = {
@@ -269,6 +302,131 @@ export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtO
             </div>
           ))}
         </div>
+      </div>
+
+      {/* 십신 분석 */}
+      <div>
+        <p className="text-xs tracking-widest mb-1" style={{ color: '#d4a853' }}>
+          {lang === 'ko' ? '✦ 십신 분석' : '✦ Ten Gods Analysis'}
+        </p>
+        <p className="text-xs mb-4" style={{ color: 'rgba(232,213,183,0.4)' }}>
+          {lang === 'ko'
+            ? '일간(나)과 각 기둥의 오행 관계를 나타냅니다. 타고난 성격, 재물·관계·학문의 기질을 읽을 수 있습니다.'
+            : 'Shows the elemental relationships between your Day Master and each pillar — revealing innate personality, wealth, relationships, and learning style.'}
+        </p>
+
+        {/* 기둥별 십신 한눈에 보기 */}
+        {(() => {
+          const dmIdx = saju.dayMaster.stemIndex;
+          const pillarDefs = [
+            { labelKo: '연간', labelEn: 'Year', stem: STEMS_KR[saju.year.stemIndex],  sipShin: saju.year.sipShin },
+            { labelKo: '월간', labelEn: 'Mon',  stem: STEMS_KR[saju.month.stemIndex], sipShin: saju.month.sipShin },
+            { labelKo: '일간', labelEn: 'Day',  stem: STEMS_KR[saju.day.stemIndex],   sipShin: undefined },
+            { labelKo: '시간', labelEn: 'Hour', stem: STEMS_KR[saju.hour.stemIndex],  sipShin: saju.hour.sipShin },
+          ];
+          const branchDefs = [
+            { labelKo: '연지', labelEn: 'Y.Br', branchKr: saju.year.branchKr,  sipShin: getSipShin(dmIdx, HIDDEN_STEMS[saju.year.branchIndex].at(-1)!) },
+            { labelKo: '월지', labelEn: 'M.Br', branchKr: saju.month.branchKr, sipShin: getSipShin(dmIdx, HIDDEN_STEMS[saju.month.branchIndex].at(-1)!) },
+            { labelKo: '일지', labelEn: 'D.Br', branchKr: saju.day.branchKr,   sipShin: getSipShin(dmIdx, HIDDEN_STEMS[saju.day.branchIndex].at(-1)!) },
+            { labelKo: '시지', labelEn: 'H.Br', branchKr: saju.hour.branchKr,  sipShin: getSipShin(dmIdx, HIDDEN_STEMS[saju.hour.branchIndex].at(-1)!) },
+          ];
+          return (
+            <div className="glass-card rounded-2xl p-4 mb-4">
+              {/* 천간 */}
+              <p className="text-xs mb-2" style={{ color: 'rgba(212,168,83,0.55)' }}>{lang === 'ko' ? '천간 (일간 기준)' : 'Heavenly Stems'}</p>
+              <div className="grid grid-cols-4 gap-2 mb-4">
+                {pillarDefs.map(({ labelKo, labelEn, stem, sipShin }) => {
+                  const meta = sipShin ? SIP_SHIN_META[sipShin] : null;
+                  return (
+                    <div key={labelKo} className="text-center">
+                      <div className="text-xs mb-1" style={{ color: 'rgba(212,168,83,0.5)' }}>{lang === 'ko' ? labelKo : labelEn}</div>
+                      <div className="text-base font-bold mb-1" style={{ color: '#e8d5b7' }}>{stem}</div>
+                      <div className="text-xs px-1.5 py-0.5 rounded-full" style={{
+                        background: meta ? `${meta.color}22` : 'rgba(212,168,83,0.08)',
+                        color: meta ? meta.color : 'rgba(232,213,183,0.4)',
+                        border: `1px solid ${meta ? `${meta.color}44` : 'rgba(212,168,83,0.1)'}`,
+                      }}>
+                        {sipShin ? (lang === 'ko' ? sipShin : (SIP_SHIN_EN_MAP[sipShin] ?? sipShin)) : (lang === 'ko' ? '본원' : 'Self')}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {/* 지지 */}
+              <p className="text-xs mb-2" style={{ color: 'rgba(212,168,83,0.55)' }}>{lang === 'ko' ? '지지 정기 (일간 기준)' : 'Earthly Branches (main qi)'}</p>
+              <div className="grid grid-cols-4 gap-2">
+                {branchDefs.map(({ labelKo, labelEn, branchKr, sipShin }) => {
+                  const meta = SIP_SHIN_META[sipShin];
+                  return (
+                    <div key={labelKo} className="text-center">
+                      <div className="text-xs mb-1" style={{ color: 'rgba(212,168,83,0.5)' }}>{lang === 'ko' ? labelKo : labelEn}</div>
+                      <div className="text-base font-bold mb-1" style={{ color: '#e8d5b7' }}>{branchKr}</div>
+                      <div className="text-xs px-1.5 py-0.5 rounded-full" style={{
+                        background: `${meta.color}22`,
+                        color: meta.color,
+                        border: `1px solid ${meta.color}44`,
+                      }}>
+                        {lang === 'ko' ? sipShin : (SIP_SHIN_EN_MAP[sipShin] ?? sipShin)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* 내 사주에 있는 십신 설명 */}
+        {(() => {
+          const dmIdx = saju.dayMaster.stemIndex;
+          const entries: { sipShin: string; pillarsKo: string[]; pillarsEn: string[] }[] = [];
+          const seen = new Map<string, { ko: string[]; en: string[] }>();
+          const add = (sipShin: string | undefined, ko: string, en: string) => {
+            if (!sipShin) return;
+            if (!seen.has(sipShin)) seen.set(sipShin, { ko: [], en: [] });
+            seen.get(sipShin)!.ko.push(ko);
+            seen.get(sipShin)!.en.push(en);
+          };
+          add(saju.year.sipShin,  '연간', 'Year stem');
+          add(saju.month.sipShin, '월간', 'Month stem');
+          add(saju.hour.sipShin,  '시간', 'Hour stem');
+          add(getSipShin(dmIdx, HIDDEN_STEMS[saju.year.branchIndex].at(-1)!),   '연지', 'Year branch');
+          add(getSipShin(dmIdx, HIDDEN_STEMS[saju.month.branchIndex].at(-1)!),  '월지', 'Month branch');
+          add(getSipShin(dmIdx, HIDDEN_STEMS[saju.day.branchIndex].at(-1)!),    '일지', 'Day branch');
+          add(getSipShin(dmIdx, HIDDEN_STEMS[saju.hour.branchIndex].at(-1)!),   '시지', 'Hour branch');
+          seen.forEach((v, k) => entries.push({ sipShin: k, pillarsKo: v.ko, pillarsEn: v.en }));
+          return (
+            <div className="space-y-2">
+              {entries.map(({ sipShin, pillarsKo, pillarsEn }) => {
+                const meta = SIP_SHIN_META[sipShin];
+                if (!meta) return null;
+                return (
+                  <div
+                    key={sipShin}
+                    className="rounded-xl px-4 py-3"
+                    style={{ background: `${meta.color}0d`, border: `1px solid ${meta.color}33` }}
+                  >
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <span className="text-base">{meta.emoji}</span>
+                      <span className="text-sm font-bold" style={{ color: meta.color }}>
+                        {lang === 'ko' ? sipShin : (SIP_SHIN_EN_MAP[sipShin] ?? sipShin)}
+                      </span>
+                      <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: `${meta.color}22`, color: meta.color }}>
+                        {lang === 'ko' ? meta.tagKo : meta.tagEn}
+                      </span>
+                      <span className="text-xs" style={{ color: 'rgba(232,213,183,0.4)' }}>
+                        {lang === 'ko' ? pillarsKo.join(' · ') : pillarsEn.join(' · ')}
+                      </span>
+                    </div>
+                    <p className="text-xs leading-relaxed" style={{ color: 'rgba(232,213,183,0.65)' }}>
+                      {lang === 'ko' ? meta.descKo : meta.descEn}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
 
       </div>}
