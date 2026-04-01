@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import type { SajuResult } from '@/lib/astrology';
-import { calcTodaySajuFortune, calc12Unsung, getSipShin, HIDDEN_STEMS, BRANCH_EL, ELEMENTS_KR, SIP_SHIN_EN_MAP, UNSUNG_EN_MAP } from '@/lib/astrology';
+import { calcTodaySajuFortune, calcSinSal, calc12Unsung, getSipShin, HIDDEN_STEMS, BRANCH_EL, ELEMENTS_KR, SIP_SHIN_EN_MAP, UNSUNG_EN_MAP } from '@/lib/astrology';
 import { useLang } from '@/lib/lang';
 import { t } from '@/lib/translations';
 
@@ -39,8 +39,10 @@ export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtO
 
   const elements = Object.entries(saju.elementCount);
   const maxCount = Math.max(...elements.map(([, v]) => v));
-  const today = useMemo(() => calcTodaySajuFortune(saju, lmtOffsetMin), [saju, lmtOffsetMin]);
-  const [open, setOpen] = useState(false);
+  const today    = useMemo(() => calcTodaySajuFortune(saju, lmtOffsetMin, 0), [saju, lmtOffsetMin]);
+  const tomorrow = useMemo(() => calcTodaySajuFortune(saju, lmtOffsetMin, 1), [saju, lmtOffsetMin]);
+  const sinsal   = useMemo(() => calcSinSal(saju), [saju]);
+  const [open, setOpen] = useState(true);
 
   return (
     <div className="space-y-4">
@@ -59,6 +61,24 @@ export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtO
             </div>
           </div>
           <p className="text-sm leading-relaxed" style={{ color: '#e8d5b7' }}>{lang === 'ko' ? today.summary : today.summaryEn}</p>
+
+          {/* 다음날 운세 */}
+          <div className="mt-3 pt-3" style={{ borderTop: '1px solid rgba(212,168,83,0.12)' }}>
+            <p className="text-xs mb-1.5" style={{ color: 'rgba(212,168,83,0.6)' }}>
+              {lang === 'ko' ? '내일 미리보기' : 'Tomorrow Preview'}
+            </p>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold" style={{ color: 'rgba(240,201,122,0.7)' }}>
+                {tomorrow.todayStemKr}{tomorrow.todayBranchKr}
+              </span>
+              <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(212,168,83,0.1)', border: '1px solid rgba(212,168,83,0.2)', color: 'rgba(240,201,122,0.7)' }}>
+                {lang === 'ko' ? tomorrow.sipShin : tomorrow.sipShinEn} · {lang === 'ko' ? tomorrow.keyword : tomorrow.keywordEn}
+              </span>
+              <span className="text-xs flex-1" style={{ color: 'rgba(232,213,183,0.45)' }}>
+                {lang === 'ko' ? tomorrow.summary.slice(0, 25) + '…' : tomorrow.summaryEn.slice(0, 30) + '…'}
+              </span>
+            </div>
+          </div>
         </div>
         <button
           onClick={() => setOpen(v => !v)}
@@ -211,6 +231,48 @@ export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtO
           })}
         </div>
       </div>
+
+      {/* 신살 / 귀인 */}
+      <div>
+        <p className="text-xs tracking-widest mb-1" style={{ color: '#d4a853' }}>
+          {lang === 'ko' ? '✦ 신살 & 귀인 (일주 기준)' : '✦ Star Spirits & Guardians (Day Pillar)'}
+        </p>
+        <p className="text-xs mb-3" style={{ color: 'rgba(232,213,183,0.4)' }}>
+          {lang === 'ko'
+            ? '일주에서 파생되는 타고난 기질과 운의 특징입니다.'
+            : 'Innate traits and fortune patterns derived from your Day Pillar.'}
+        </p>
+        <div className="space-y-2">
+          {sinsal.map(s => (
+            <div
+              key={s.name}
+              className="glass-card rounded-xl px-4 py-3 flex items-start gap-3"
+              style={{ opacity: s.present ? 1 : 0.45 }}
+            >
+              <span className="text-xl shrink-0 mt-0.5">{s.emoji}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <span className="text-sm font-bold" style={{ color: s.present ? '#f0c97a' : 'rgba(232,213,183,0.6)' }}>
+                    {lang === 'ko' ? s.name : s.nameEn}
+                  </span>
+                  {s.present
+                    ? <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(212,168,83,0.2)', border: '1px solid rgba(212,168,83,0.4)', color: '#f0c97a' }}>
+                        {s.pillars.join(' · ')} 有
+                      </span>
+                    : <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(232,213,183,0.35)' }}>
+                        {lang === 'ko' ? '없음' : 'Absent'}
+                      </span>
+                  }
+                </div>
+                <p className="text-xs leading-relaxed" style={{ color: 'rgba(232,213,183,0.6)' }}>
+                  {lang === 'ko' ? s.shortDesc : s.shortDescEn}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       </div>}
     </div>
   );

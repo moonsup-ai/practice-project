@@ -320,10 +320,12 @@ export default function FortunePage() {
               </p>
             )}
 
-            {/* 야자시/조자시 */}
-            {!form.unknownTime && (
-              <div className="pt-1">
-                <p className="text-xs mb-2" style={{ color: 'rgba(212,168,83,0.7)' }}>{f.ziHourLabel[lang]}</p>
+            {/* 야자시/조자시 - 23시에만 표시 */}
+            {!form.unknownTime && form.hour === 23 && (
+              <div className="pt-1 rounded-xl px-3 py-2.5" style={{ background: 'rgba(212,168,83,0.06)', border: '1px solid rgba(212,168,83,0.2)' }}>
+                <p className="text-xs mb-2" style={{ color: 'rgba(212,168,83,0.8)' }}>
+                  {lang === 'ko' ? '자정(23:00~00:00) 출생 — 일주 설정' : 'Born near midnight (23:00~00:00) — Day Pillar Setting'}
+                </p>
                 <div className="flex gap-3">
                   {(['야자시', '조자시'] as const).map(opt => (
                     <label key={opt} className="flex items-center gap-2 cursor-pointer">
@@ -338,13 +340,18 @@ export default function FortunePage() {
                       </div>
                       <input type="radio" name="jajasi" value={opt} checked={form.jajasi === opt} onChange={() => set('jajasi', opt)} className="sr-only" />
                       <span className="text-sm" style={{ color: form.jajasi === opt ? '#f0c97a' : 'rgba(232,213,183,0.65)' }}>
-                        {lang === 'ko' ? opt : (opt === '야자시' ? 'Late Zi' : 'Early Zi')}
+                        {lang === 'ko'
+                          ? (opt === '야자시' ? '야자시 (오늘 일주)' : '조자시 (내일 일주)')
+                          : (opt === '야자시' ? "Late Zi (today's pillar)" : "Early Zi (tomorrow's pillar)")
+                        }
                       </span>
                     </label>
                   ))}
                 </div>
                 <p className="text-xs mt-1.5" style={{ color: 'rgba(232,213,183,0.35)' }}>
-                  {f.ziHourNote[form.jajasi][lang]}
+                  {lang === 'ko'
+                    ? '잘 모르겠다면 야자시(기본값)를 선택하세요.'
+                    : 'If unsure, leave as Late Zi (default).'}
                 </p>
               </div>
             )}

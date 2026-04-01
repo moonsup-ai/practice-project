@@ -1063,7 +1063,105 @@ export function calc12Unsung(dayStemIdx: number, branchIdx: number): string {
   }
 }
 
-// ─── 2-13. 오늘의 사주 운세 ──────────────────────────────────
+// ─── 2-13. 신살 / 귀인 계산 ──────────────────────────────────
+
+export interface SinSal {
+  name: string;
+  nameEn: string;
+  emoji: string;
+  present: boolean;
+  pillars: string[];       // 어느 기둥 지지에 존재하는지
+  shortDesc: string;
+  shortDescEn: string;
+}
+
+// 천을귀인 지지 (일간 인덱스 → 귀인 지지 인덱스 배열)
+// 甲戊庚→丑未, 乙己→子申, 丙丁→亥酉, 辛→寅午, 壬癸→卯巳
+const CHEONUL_BRANCHES: readonly (readonly number[])[] = [
+  [1, 7],   // 甲(0) → 丑(1), 未(7)
+  [0, 8],   // 乙(1) → 子(0), 申(8)
+  [11, 9],  // 丙(2) → 亥(11), 酉(9)
+  [11, 9],  // 丁(3) → 亥(11), 酉(9)
+  [1, 7],   // 戊(4) → 丑(1), 未(7)
+  [0, 8],   // 己(5) → 子(0), 申(8)
+  [1, 7],   // 庚(6) → 丑(1), 未(7)
+  [2, 6],   // 辛(7) → 寅(2), 午(6)
+  [3, 5],   // 壬(8) → 卯(3), 巳(5)
+  [3, 5],   // 癸(9) → 卯(3), 巳(5)
+] as const;
+
+// 문창귀인 지지 (일간 인덱스 → 지지 인덱스)
+// 甲→巳, 乙→午, 丙→申, 丁→酉, 戊→申, 己→酉, 庚→亥, 辛→子, 壬→寅, 癸→卯
+const MUNCHANG_BRANCH: readonly number[] = [5, 6, 8, 9, 8, 9, 11, 0, 2, 3] as const;
+
+// 삼합 그룹별 [역마, 도화, 화개] 지지 인덱스
+// 寅午戌(2,6,10) → 申(8), 卯(3), 戌(10)
+// 巳酉丑(5,9,1)  → 亥(11), 午(6), 丑(1)
+// 申子辰(8,0,4)  → 寅(2), 酉(9), 辰(4)
+// 亥卯未(11,3,7) → 巳(5), 子(0), 未(7)
+const SAMHAP_SAL: Readonly<Record<number, readonly [number, number, number]>> = {
+  2:  [8, 3, 10],  6:  [8, 3, 10],  10: [8, 3, 10],
+  5:  [11, 6, 1],  9:  [11, 6, 1],  1:  [11, 6, 1],
+  8:  [2, 9, 4],   0:  [2, 9, 4],   4:  [2, 9, 4],
+  11: [5, 0, 7],   3:  [5, 0, 7],   7:  [5, 0, 7],
+};
+
+const SINSAL_PILLAR_KR = ['연지', '월지', '시지'];
+
+/**
+ * 일주 기준 주요 신살·귀인 계산
+ * 천을귀인·문창귀인은 일간, 역마·도화·화개는 일지 삼합 그룹 기준
+ */
+export function calcSinSal(saju: SajuResult): SinSal[] {
+  const dmIdx = saju.day.stemIndex;
+  const dayBi = saju.day.branchIndex;
+  const others = [saju.year.branchIndex, saju.month.branchIndex, saju.hour.branchIndex];
+
+  const findPillars = (targets: readonly number[]): string[] =>
+    others.flatMap((bi, i) => targets.includes(bi) ? [SINSAL_PILLAR_KR[i]] : []);
+
+  const cheonulPillars  = findPillars(CHEONUL_BRANCHES[dmIdx] ?? []);
+  const munchangPillars = findPillars([MUNCHANG_BRANCH[dmIdx]]);
+  const salGroup = SAMHAP_SAL[dayBi];
+  const yukmaPillars  = salGroup ? findPillars([salGroup[0]]) : [];
+  const dokhwaPillars = salGroup ? findPillars([salGroup[1]]) : [];
+  const hwagaePillars = salGroup ? findPillars([salGroup[2]]) : [];
+
+  return [
+    {
+      name: '천을귀인', nameEn: 'Sky Guardian', emoji: '⭐',
+      present: cheonulPillars.length > 0, pillars: cheonulPillars,
+      shortDesc: '사주 최고의 길성! 힘들 때 귀인(귀한 사람)이 나타나 도와주는 하늘의 수호천사입니다.',
+      shortDescEn: 'The luckiest star in BaZi! A guardian who sends noble helpers to your side when you need them most.',
+    },
+    {
+      name: '문창귀인', nameEn: 'Scholar Star', emoji: '📚',
+      present: munchangPillars.length > 0, pillars: munchangPillars,
+      shortDesc: '총명함의 별! 학문·시험·자격증에 강하고, 글과 말로 빛나는 지적 재능을 타고났습니다.',
+      shortDescEn: 'Star of brilliance! Strong in academics, exams, and certifications — naturally gifted with words and intellect.',
+    },
+    {
+      name: '역마살', nameEn: 'Travel Star', emoji: '🌏',
+      present: yukmaPillars.length > 0, pillars: yukmaPillars,
+      shortDesc: '떠돌이 팔자! 이사·여행·해외·출장이 잦습니다. 움직일수록 운이 열리는 역동적인 기질입니다.',
+      shortDescEn: 'Born to roam! Frequent moves, travel, and overseas activity. This dynamic energy unlocks luck on the go.',
+    },
+    {
+      name: '도화살', nameEn: 'Peach Blossom', emoji: '🌸',
+      present: dokhwaPillars.length > 0, pillars: dokhwaPillars,
+      shortDesc: '매력 폭발! 이성을 끌어당기는 자연스러운 매력이 있고, 예술·미적 감각도 탁월합니다. (양날의 검!)',
+      shortDescEn: 'Magnetic charm! Natural pull for romance, beauty, and the arts. A double-edged star — alluring but intense.',
+    },
+    {
+      name: '화개살', nameEn: 'Mystic Star', emoji: '🎨',
+      present: hwagaePillars.length > 0, pillars: hwagaePillars,
+      shortDesc: '고독한 예술가 기질! 철학·종교·예술에 깊이 이끌리며, 혼자 있는 시간에 재충전하는 타입입니다.',
+      shortDescEn: 'Solitary artist soul! Drawn to philosophy, spirituality, and art — recharges in solitude.',
+    },
+  ];
+}
+
+// ─── 2-14. 오늘의 사주 운세 ──────────────────────────────────
 
 const SAJU_TODAY_FORTUNE: Record<string, { keyword: string; keywordEn: string; summary: string; summaryEn: string }> = {
   비견: { keyword: '자립',   keywordEn: 'Independence', summary: '자신감이 넘치고 독립적인 행동이 빛나는 날입니다. 새로운 시작을 두려워하지 마세요.', summaryEn: 'Confidence shines and independent action is at its best today. Don\'t be afraid to start something new.' },
@@ -1078,7 +1176,7 @@ const SAJU_TODAY_FORTUNE: Record<string, { keyword: string; keywordEn: string; s
   정인: { keyword: '배움',   keywordEn: 'Learning',     summary: '학습과 지혜가 빛나는 날입니다. 새로운 지식을 받아들이거나 조언을 구하면 도움이 됩니다.', summaryEn: 'Knowledge and wisdom shine today. Accepting new information or seeking advice will be beneficial.' },
 };
 
-export function calcTodaySajuFortune(saju: SajuResult, lmtOffsetMin: number = 0): {
+export function calcTodaySajuFortune(saju: SajuResult, lmtOffsetMin: number = 0, dayOffset: number = 0): {
   keyword: string; keywordEn: string;
   summary: string; summaryEn: string;
   todayStem: string; todayBranch: string;
@@ -1086,8 +1184,8 @@ export function calcTodaySajuFortune(saju: SajuResult, lmtOffsetMin: number = 0)
   sipShin: string; sipShinEn: string;
 } {
   const now = new Date();
-  // 출생지 LMT 기준으로 오늘 일진 결정: UTC + (9*60 + lmtOffsetMin)분
-  const lmt = new Date(now.getTime() + (9 * 60 + lmtOffsetMin) * 60 * 1000);
+  // 출생지 LMT 기준으로 오늘 일진 결정: UTC + (9*60 + lmtOffsetMin)분 + dayOffset일
+  const lmt = new Date(now.getTime() + (9 * 60 + lmtOffsetMin) * 60 * 1000 + dayOffset * 24 * 60 * 60 * 1000);
   const todayPillar = calcDayPillar(lmt.getUTCFullYear(), lmt.getUTCMonth() + 1, lmt.getUTCDate());
   const sipShin = getSipShin(saju.dayMaster.stemIndex, todayPillar.stemIndex);
   const fortune = SAJU_TODAY_FORTUNE[sipShin] ?? { keyword: '평온', keywordEn: 'Calm', summary: '평범하지만 안정적인 하루입니다.', summaryEn: 'An ordinary but stable day.' };
@@ -1119,7 +1217,7 @@ const WESTERN_TODAY_FORTUNE: Record<number, { keyword: string; keywordEn: string
   11: { keyword: '마무리', keywordEn: 'Closure',      summary: '한 사이클이 마무리되는 시점입니다. 감사와 정리로 다음을 준비하세요.', summaryEn: 'A cycle is coming to its end. Prepare for what\'s next with gratitude and a clear mind.' },
 };
 
-export function calcTodayWesternFortune(western: WesternChartResult): {
+export function calcTodayWesternFortune(western: WesternChartResult, dayOffset: number = 0): {
   keyword: string; keywordEn: string;
   summary: string; summaryEn: string;
   todayMoonSign: string; todayMoonSignEn: string;
@@ -1128,7 +1226,7 @@ export function calcTodayWesternFortune(western: WesternChartResult): {
 } {
   const ZODIAC_SIGNS_KR_LIST = ['양자리','황소자리','쌍둥이자리','게자리','사자자리','처녀자리',
     '천칭자리','전갈자리','사수자리','염소자리','물병자리','물고기자리'];
-  const now = new Date();
+  const now = new Date(Date.now() + dayOffset * 24 * 60 * 60 * 1000);
   const JD = julianDay(now.getUTCFullYear(), now.getUTCMonth() + 1, now.getUTCDate(), now.getUTCHours(), now.getUTCMinutes());
   const T  = (JD - 2451545.0) / 36525;
   const todayMoonSignIdx  = Math.floor(moonLongitude(T) / 30) % 12;
