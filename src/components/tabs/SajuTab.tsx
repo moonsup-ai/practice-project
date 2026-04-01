@@ -319,16 +319,16 @@ export default function SajuTab({ saju, lmtOffsetMin }: { saju: SajuResult; lmtO
         {(() => {
           const dmIdx = saju.dayMaster.stemIndex;
           const pillarDefs = [
-            { labelKo: '연간', labelEn: 'Year', stem: STEMS_KR[saju.year.stemIndex],  sipShin: saju.year.sipShin },
-            { labelKo: '월간', labelEn: 'Mon',  stem: STEMS_KR[saju.month.stemIndex], sipShin: saju.month.sipShin },
-            { labelKo: '일간', labelEn: 'Day',  stem: STEMS_KR[saju.day.stemIndex],   sipShin: undefined },
             { labelKo: '시간', labelEn: 'Hour', stem: STEMS_KR[saju.hour.stemIndex],  sipShin: saju.hour.sipShin },
+            { labelKo: '일간', labelEn: 'Day',  stem: STEMS_KR[saju.day.stemIndex],   sipShin: undefined },
+            { labelKo: '월간', labelEn: 'Mon',  stem: STEMS_KR[saju.month.stemIndex], sipShin: saju.month.sipShin },
+            { labelKo: '연간', labelEn: 'Year', stem: STEMS_KR[saju.year.stemIndex],  sipShin: saju.year.sipShin },
           ];
           const branchDefs = [
-            { labelKo: '연지', labelEn: 'Y.Br', branchKr: saju.year.branchKr,  sipShin: getSipShin(dmIdx, HIDDEN_STEMS[saju.year.branchIndex].at(-1)!) },
-            { labelKo: '월지', labelEn: 'M.Br', branchKr: saju.month.branchKr, sipShin: getSipShin(dmIdx, HIDDEN_STEMS[saju.month.branchIndex].at(-1)!) },
-            { labelKo: '일지', labelEn: 'D.Br', branchKr: saju.day.branchKr,   sipShin: getSipShin(dmIdx, HIDDEN_STEMS[saju.day.branchIndex].at(-1)!) },
             { labelKo: '시지', labelEn: 'H.Br', branchKr: saju.hour.branchKr,  sipShin: getSipShin(dmIdx, HIDDEN_STEMS[saju.hour.branchIndex].at(-1)!) },
+            { labelKo: '일지', labelEn: 'D.Br', branchKr: saju.day.branchKr,   sipShin: getSipShin(dmIdx, HIDDEN_STEMS[saju.day.branchIndex].at(-1)!) },
+            { labelKo: '월지', labelEn: 'M.Br', branchKr: saju.month.branchKr, sipShin: getSipShin(dmIdx, HIDDEN_STEMS[saju.month.branchIndex].at(-1)!) },
+            { labelKo: '연지', labelEn: 'Y.Br', branchKr: saju.year.branchKr,  sipShin: getSipShin(dmIdx, HIDDEN_STEMS[saju.year.branchIndex].at(-1)!) },
           ];
           return (
             <div className="glass-card rounded-2xl p-4 mb-4">
