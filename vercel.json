@@ -1,6 +1,28 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/met-cloisters-guide",
+      "destination": "/guide-loader.html",
+      "permanent": false
+    },
+    {
+      "source": "/met-cloisters-guide/:path*",
+      "destination": "/guide-loader.html",
+      "permanent": false
+    },
+    {
+      "source": "/met-guide",
+      "destination": "/guide-loader.html",
+      "permanent": false
+    },
+    {
+      "source": "/met-guide/:path*",
+      "destination": "/guide-loader.html",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
