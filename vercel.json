@@ -21,9 +21,23 @@
       "source": "/met-guide/:path*",
       "destination": "/guide.html",
       "permanent": false
+    },
+    {
+      "source": "/guide-loader.html",
+      "destination": "/guide.html",
+      "permanent": false
     }
   ],
   "headers": [
+    {
+      "source": "/guide.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [
