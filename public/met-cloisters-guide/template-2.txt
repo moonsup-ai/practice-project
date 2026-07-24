@@ -1,0 +1,24 @@
+ 시작, 귀환, 가족의 복수, 그리고 후대의 재해석만 기억하세요.</p><div class="prologue"><div class="chapter reveal"><span>01</span><h3>헬레네와 전쟁</h3><p>파리스가 헬레네를 데려가며 트로이 전쟁이 시작됩니다.</p></div><div class="chapter reveal"><span>02</span><h3>오디세우스의 귀환</h3><p>10년의 전쟁 뒤 또 10년을 헤매고 아내 페넬로페에게 돌아갑니다.</p></div><div class="chapter reveal"><span>03</span><h3>클리타임네스트라의 복수</h3><p>딸의 희생이 아가멤논 가문의 연쇄 복수로 이어집니다.</p></div><div class="chapter reveal"><span>04</span><h3>호메로스의 유산</h3><p>고대 이야기는 렘브란트와 카우프만의 시대까지 계속 새롭게 읽힙니다.</p></div></div></div></section>
+<section id="route"><div class="wrap"><div class="eyebrow">Optimized route</div><h2>시간은 짧게,<br>서사는 끊기지 않게</h2><p class="lead">폐관이 빠른 클로이스터를 먼저 보고, 본관에서는 갤러리 번호를 따라 한 방향으로 이동합니다.</p><div class="schedule"><div class="schedule-item reveal"><time>14:00–15:20</time><div><h3>The Met Cloisters</h3><p>Cuxa Cloister → Cloisters Cross → Unicorn Tapestry → Mérode Altarpiece</p></div><b>80분</b></div><div class="schedule-item reveal"><time>15:20–16:05</time><div><h3>본관으로 이동</h3><p>부모님과 함께라면 택시·Uber·Lyft가 가장 안정적입니다.</p></div><b>40–50분</b></div><div class="schedule-item reveal"><time>16:05–16:47</time><div><h3>그리스·로마 오디세이 코어</h3><p>Gallery 155 → 157 → 161 → 169</p></div><b>42분</b></div><div class="schedule-item reveal"><time>16:47–18:10</time><div><h3>트로이 방패 → 덴두르 → 호메로스 → 칼립소</h3><p>Gallery 374 → 131 → 614 → 616 → 627</p></div><b>83분</b></div><div class="schedule-item reveal"><time>18:10–18:45</time><div><h3>모네와 반 고흐 피날레</h3><p>Gallery 819 → 825 → Great Hall</p></div><b>35분</b></div></div><div class="note"><b>6시에 나가야 한다면:</b> Washington, Monet, Van Gogh를 생략하고 오디세이 코어·덴두르·호메로스·칼립소를 유지하세요.</div></div></section>
+<section id="works"><div class="wrap"><div class="eyebrow">Odyssey collection</div><h2>작품 앞에서<br>이야기가 시작됩니다</h2><p class="lead">작품 이미지를 먼저 보고, 현장에서는 각 카드의 “앞에서 볼 것”만 읽어도 충분합니다.</p><div class="story-stack"><article class="story-card reveal">
+  <div class="story-image"><img loading="lazy" src="__ODYSSEY_IMG_0__" alt="Terracotta neck-amphora — Menelaos reclaiming Helen"></div>
+  <div class="story-copy">
+    <div class="kicker"><span>01</span><span>Gallery 155</span><span>헬레네</span></div>
+    <h3>Terracotta neck-amphora — Menelaos reclaiming Helen</h3><p class="meta">기원전 6세기경 · 그리스 도자기</p>
+    <div class="explain"><b>이 장면은</b><p>트로이 전쟁이 끝난 뒤, 메넬라오스가 아내 헬레네를 다시 데려오는 장면입니다. 오디세이 자체의 장면이라기보다, 오디세우스가 참전했던 그 거대한 전쟁이 어떻게 끝났는지를 보여주는 작품입니다.</p></div>
+    <div class="two"><div><b>왜 볼까</b><p>헬레네는 트로이 전쟁의 직접적인 계기가 된 인물이라, 이 작품 한 점만으로도 전체 서사의 출발과 종착이 연결됩니다.</p></div><div><b>앞에서 볼 것</b><p>메넬라오스의 자세와 헬레네의 몸짓을 보세요. “분노와 용서가 동시에 섞인 순간”처럼 읽힙니다.</p></div></div>
+    <a class="text-link" href="https://www.metmuseum.org/art/collection/search/254876" target="_blank" rel="noopener">The Met 공식 작품 페이지 ↗</a>
+  </div>
+</article>
+<article class="story-card reveal">
+  <div class="story-image"><img loading="lazy" src="__ODYSSEY_IMG_1__" alt="Terracotta pyxis — The Judgment of Paris"></div>
+  <div class="story-copy">
+    <div class="kicker"><span>02</span><span>Gallery 157</span><span>전쟁의 시작</span></div>
+    <h3>Terracotta pyxis — The Judgment of Paris</h3><p class="meta">기원전 5세기경 · 그리스 도자기</p>
+    <div class="explain"><b>이 장면은</b><p>트로이의 왕자 파리스가 헤라, 아테나, 아프로디테 중 가장 아름다운 여신을 고르는 장면입니다. 아프로디테는 보상으로 헬레네를 약속했고, 결국 이것이 전쟁으로 이어집니다.</p></div>
+    <div class="two"><div><b>왜 볼까</b><p>오디세이의 모든 여정은 결국 “트로이 전쟁 이후”의 이야기이므로, 이 장면은 그 모든 비극의 첫 단추라고 볼 수 있습니다.</p></div><div><b>앞에서 볼 것</b><p>인물이 작고 복잡하게 배치되어 있어도, “여신들의 경쟁”이라는 긴장감에 집중하면 읽기 쉽습니다.</p></div></div>
+    <a class="text-link" href="https://www.metmuseum.org/art/collection/search/247916" target="_blank" rel="noopener">The Met 공식 작품 페이지 ↗</a>
+  </div>
+</article>
+<article class="story-card reveal">
+  <div class="story-image"><img loading="lazy
