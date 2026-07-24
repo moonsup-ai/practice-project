@@ -1,15 +1,13 @@
 # The Met × The Cloisters Guide
 
-`met-guide` 브랜치 전용 독립 정적 웹사이트입니다.
+`met-guide` 브랜치의 루트가 독립 Next.js 프로젝트입니다.
 
-## Vercel 배포
+## Vercel
 
 - Repository: `moonsup-ai/practice-project`
-- Branch: `met-guide`
+- Production Branch: `met-guide`
 - Root Directory: `./`
-- Framework Preset: `Other`
-- Build Command: 비움
-- Output Directory: 비움
+- Framework: `Next.js`
 - Environment Variables: 없음
 
-`main` 브랜치의 기존 프로젝트와 완전히 분리되어 있습니다.
+`main` 브랜치는 변경하지 않습니다.
