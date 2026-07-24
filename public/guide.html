@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f3eee4">
+<meta name="robots" content="noindex,nofollow">
+<title>오디세이를 따라 두 개의 Met 걷기</title>
+<meta name="description" content="부모님과 함께 보는 The Met Cloisters와 The Met Fifth Avenue 오디세이 테마 디지털 가이드">
+<style>
+:root{--bg:#f3eee4;--paper:#fffdf8;--ink:#17211e;--muted:#68716c;--line:#d9d0c1;--green:#203a32;--gold:#c9a45d;--rose:#8e493a;--soft:#ece5da;--shadow:0 16px 48px rgba(35,40,34,.10)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR","Apple SD Gothic Neo","Segoe UI",sans-serif;line-height:1.62;word-break:keep-all}
+a{color:inherit}
+.wrap{width:min(1160px,calc(100% - 34px));margin:auto}
+.progress{position:fixed;top:0;left:0;height:3px;background:var(--rose);width:0;z-index:60}
+nav{position:sticky;top:0;z-index:50;background:rgba(243,238,228,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(217,208,193,.8)}
+.navin{width:min(1160px,calc(100% - 28px));margin:auto;min-height:60px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{font-weight:900;text-decoration:none;letter-spacing:-.02em;font-size:.92rem}
+.links{display:flex;gap:17px}.links a{text-decoration:none;font-size:.83rem;font-weight:800;color:var(--muted)}
+.print{border:1px solid var(--line);background:var(--paper);border-radius:999px;padding:8px 12px;font:inherit;font-size:.82rem;font-weight:800}
+.hero{min-height:87vh;display:flex;align-items:center;position:relative;overflow:hidden;background:radial-gradient(circle at 12% 0%,rgba(201,164,93,.18),transparent 35rem),radial-gradient(circle at 100% 50%,rgba(32,58,50,.12),transparent 35rem),var(--bg)}
+.hero:before{content:"";position:absolute;width:520px;height:520px;border-radius:50%;border:1px solid rgba(32,58,50,.12);right:-210px;top:80px}.hero:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;border:1px solid rgba(142,73,58,.14);left:-130px;bottom:30px}
+.hero .wrap{position:relative;z-index:1}.eyebrow{text-transform:uppercase;letter-spacing:.17em;font-size:.73rem;font-weight:950;color:var(--green)}
+h1,h2{font-family:Georgia,"Times New Roman",serif;font-weight:500;letter-spacing:-.04em}
+h1{font-size:clamp(3.3rem,8vw,7.4rem);line-height:.91;margin:14px 0 24px;max-width:1000px}
+.hero p{max-width:760px;color:var(--muted);font-size:clamp(1rem,2vw,1.24rem)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}.chip{padding:7px 11px;border:1px solid var(--line);border-radius:999px;background:rgba(255,253,248,.76);font-weight:800;font-size:.8rem}
+section{padding:78px 0}section.dark{background:var(--green);color:#f8f4ec}.dark .muted{color:#cbd6d1}
+h2{font-size:clamp(2.45rem,5vw,5rem);line-height:.96;margin:10px 0 18px}.lead{color:var(--muted);max-width:760px}.dark .lead{color:#cbd6d1}
+.prologue{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:32px}.chapter{border:1px solid rgba(255,255,255,.18);border-radius:23px;padding:22px;background:rgba(255,255,255,.05)}.chapter span{font-weight:950;color:#dbc38f}.chapter h3{margin:18px 0 7px}.chapter p{margin:0;color:#cbd6d1;font-size:.9rem}
+.schedule{display:grid;gap:11px;margin-top:31px}.schedule-item{display:grid;grid-template-columns:120px 1fr auto;gap:20px;align-items:center;border:1px solid var(--line);background:var(--paper);border-radius:20px;padding:18px}.schedule-item time{font-weight:950;color:var(--green)}.schedule-item h3{margin:0 0 4px}.schedule-item p{margin:0;color:var(--muted);font-size:.9rem}.schedule-item b{font-size:.8rem;border-radius:999px;background:#ede4d4;padding:6px 9px;color:#654f25}.parking{margin-top:18px;padding:18px;border-radius:18px;background:#fff4ee;border:1px solid #dfb9ae;color:#703324}.parking p{margin:4px 0 0;font-size:.92rem}
+.soft{background:#ece5da}
+.storyStack{display:grid;gap:27px;margin-top:36px}
+.storyCard{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);overflow:hidden;background:var(--paper);border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow)}
+.artMedia{min-height:490px;background:#e7dfd2;display:grid;place-items:center;position:relative;overflow:hidden}
+.artMedia img{width:100%;height:100%;max-height:650px;object-fit:contain}
+.imageState{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:25px;color:#7d8580;background:linear-gradient(135deg,#e7dfd2,#f1ebe1)}
+.imageState.loading{background:linear-gradient(110deg,#e7dfd2 8%,#f7f2e9 18%,#e7dfd2 33%);background-size:220% 100%;animation:imageShimmer 1.25s linear infinite}
+.imageState.failed strong{display:block;letter-spacing:.25em;font-size:1rem;margin-bottom:8px}
+.imageState.failed span{display:block;font-size:.82rem;line-height:1.45}
+.imageState.loading strong,.imageState.loading span{display:none}
+@keyframes imageShimmer{to{background-position-x:-220%}}
+.storyCopy{padding:34px}
+.kicker{display:flex;flex-wrap:wrap;gap:8px}.kicker span{font-size:.71rem;font-weight:900;border-radius:999px;padding:5px 8px;background:#efe5d2;color:#674d20}.kicker span:first-child{background:var(--green);color:white}
+.storyCopy h3{font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.7rem,3vw,2.72rem);line-height:1.05;margin:18px 0 8px}.meta{color:var(--muted);margin:0 0 22px}.explain,.twocol>div{border-top:1px solid var(--line);padding-top:14px;margin-top:14px}.explain b,.twocol b{font-size:.85rem}.explain p,.twocol p{margin:4px 0 0;color:var(--muted);font-size:.94rem}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px}.textLink{display:inline-block;margin-top:20px;color:var(--green);font-weight:900;text-underline-offset:4px}
+.roomBadge{position:absolute;left:14px;bottom:14px;padding:6px 9px;border-radius:999px;background:rgba(23,33,30,.84);color:white;font-size:.71rem;font-weight:900;z-index:2}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}.artCard{text-decoration:none;background:var(--paper);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow);transition:.25s transform}.artCard:hover{transform:translateY(-5px)}.cardMedia{height:270px;background:#e7dfd2;position:relative;overflow:hidden}.cardMedia img{width:100%;height:100%;object-fit:cover}.cardCopy{padding:20px}.cardCopy small{font-size:.73rem;font-weight:900;color:var(--rose)}.cardCopy h3{font-family:Georgia,serif;font-size:1.45rem;line-height:1.08;margin:7px 0}.cardCopy p{color:var(--muted);font-size:.9rem;margin:0}
+.archiveGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px}.archiveCard{text-decoration:none;background:var(--paper);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:.25s transform,.25s box-shadow}.archiveCard:hover{transform:translateY(-4px);box-shadow:var(--shadow)}.archiveMedia{height:190px;background:#e7dfd2;position:relative;overflow:hidden}.archiveMedia img{width:100%;height:100%;object-fit:cover}.archiveCopy{padding:14px}.archiveCopy h3{font-family:Georgia,serif;font-size:1.08rem;line-height:1.08;margin:0 0 7px}.archiveCopy .artist{font-size:.76rem;color:var(--muted);margin:0 0 8px}.archiveCopy .note{font-size:.79rem;color:var(--green);margin:0;line-height:1.45}.archiveFoot{margin-top:16px;color:var(--muted);font-size:.82rem}
+.practical{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}.tip{border:1px solid rgba(255,255,255,.18);border-radius:22px;padding:22px;background:rgba(255,255,255,.06)}.tip h3{margin:0 0 8px}.tip p{margin:0;color:#cbd6d1;font-size:.92rem}
+footer{padding:34px 0 60px;color:var(--muted);font-size:.84rem}.reveal{opacity:0;transform:translateY(24px);transition:.7s ease}.reveal.visible{opacity:1;transform:none}
+@media(max-width:960px){.prologue{grid-template-columns:1fr 1fr}.storyCard{grid-template-columns:1fr}.grid3{grid-template-columns:1fr 1fr}.archiveGrid{grid-template-columns:repeat(3,1fr)}.practical{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.links{display:none}.print{display:none}.hero{min-height:78vh}.prologue,.grid3,.practical{grid-template-columns:1fr}.archiveGrid{grid-template-columns:1fr 1fr;gap:10px}.schedule-item{grid-template-columns:1fr}.schedule-item b{justify-self:start}.storyCopy{padding:22px}.twocol{grid-template-columns:1fr}.artMedia{min-height:300px}.archiveMedia{height:150px}section{padding:52px 0}h1{font-size:3.55rem}}
+@media print{nav,.progress{display:none}.reveal{opacity:1;transform:none}.storyCard,.artCard{box-shadow:none;break-inside:avoid}body{background:white}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<nav><div class="navin"><a class="brand" href="#top">THE MET × THE CLOISTERS</a><div class="links"><a href="#story">오디세이</a><a href="#route">동선</a><a href="#works">작품</a><a href="#must">대표작</a><a href="#archive">더 보기</a></div><button class="print" onclick="window.print()">PDF 저장</button></div></nav>
+<header id="top" class="hero"><div class="wrap"><div class="eyebrow">A family museum journey</div><h1>오디세이를 따라<br>두 개의 Met 걷기</h1><p>부모님과 함께 오후 2시부터 6시 45분까지. 낯선 신화를 짧은 이야기로 이해하고, 작품 앞에서 무엇을 볼지 바로 알 수 있는 디지털 전시 가이드입니다.</p><div class="chips"><span class="chip">금·토 권장</span><span class="chip">자가용 이동</span><span class="chip">오디세이 9점</span><span class="chip">메트 대표작 6점</span></div></div></header>
+<section id="story" class="dark"><div class="wrap"><div class="eyebrow" style="color:#dbc38f">3-minute prologue</div><h2>이 네 장면만 알면<br>작품이 이야기로 보입니다</h2><p class="lead">신화의 이름을 모두 외울 필요는 없습니다. 전쟁의 시작, 귀환, 가족의 복수, 그리고 후대의 재해석만 기억하세요.</p><div class="prologue"><div class="chapter reveal"><span>01</span><h3>헬레네와 전쟁</h3><p>파리스가 헬레네를 데려가며 트로이 전쟁이 시작됩니다.</p></div><div class="chapter reveal"><span>02</span><h3>오디세우스의 귀환</h3><p>10년의 전쟁 뒤 또 10년을 헤매고 아내 페넬로페에게 돌아갑니다.</p></div><div class="chapter reveal"><span>03</span><h3>클리타임네스트라의 복수</h3><p>딸의 희생이 아가멤논 가문의 연쇄 복수로 이어집니다.</p></div><div class="chapter reveal"><span>04</span><h3>호메로스의 유산</h3><p>고대 이야기는 렘브란트와 카우프만의 시대까지 새롭게 읽힙니다.</p></div></div></div></section>
+<section id="route"><div class="wrap"><div class="eyebrow">Optimized route</div><h2>시간은 짧게,<br>서사는 끊기지 않게</h2><p class="lead">클로이스터를 먼저 보고 자가용으로 Fifth Avenue 본관까지 이동한 뒤, 갤러리 번호를 따라 한 방향으로 관람합니다.</p><div class="schedule"><div class="schedule-item reveal"><time>14:00–15:20</time><div><h3>The Met Cloisters</h3><p>Cuxa Cloister → Cloisters Cross → Unicorn Tapestry → Mérode Altarpiece</p></div><b>80분</b></div><div class="schedule-item reveal"><time>15:20–16:05</time><div><h3>자가용으로 본관 이동</h3><p>Fort Tryon Park에서 출발해 The Met Garage로 이동하고 주차까지 마칩니다.</p></div><b>약 45분</b></div><div class="schedule-item reveal"><time>16:05–16:47</time><div><h3>그리스·로마 오디세이 코어</h3><p>Gallery 155 → 157 → 161 → 169</p></div><b>42분</b></div><div class="schedule-item reveal"><time>16:47–18:10</time><div><h3>트로이 방패 → 덴두르 → 호메로스 → 칼립소</h3><p>Gallery 374 → 131 → 614 → 616 → 627</p></div><b>83분</b></div><div class="schedule-item reveal"><time>18:10–18:45</time><div><h3>모네와 반 고흐 피날레</h3><p>Gallery 819 → 825 → Great Hall</p></div><b>35분</b></div></div><div class="parking"><strong>자가용 팁</strong><p>The Met Fifth Avenue Garage 입구는 Fifth Avenue와 80th Street에 있습니다. 공간이 제한될 수 있으므로 주차 진입과 박물관 입장에 최소 10–15분 버퍼를 두세요.</p></div></div></section>
+<section id="works" class="soft"><div class="wrap"><div class="eyebrow">Odyssey collection</div><h2>작품 앞에서<br>이야기가 시작됩니다</h2><p class="lead">작품 이미지를 먼저 보고, 현장에서는 각 카드의 “앞에서 볼 것”만 읽어도 충분합니다.</p><div id="odysseyStack" class="storyStack"></div></div></section>
+<section id="must"><div class="wrap"><div class="eyebrow">The Met essentials</div><h2>오디세이 외<br>대표작도 놓치지 않게</h2><p class="lead">부모님이 “메트에서 제일 유명한 것도 보고 싶다”고 하시면 이 여섯 점을 함께 보세요.</p><div id="mustGrid" class="grid3"></div></div></section>
+<section id="archive"><div class="wrap"><div class="eyebrow">More to discover</div><h2>시간 때문에 소개하지 못한<br>작품 아카이브</h2><p class="lead">이번 압축 동선에서는 제외했지만, 시간이 더 있거나 다음 방문을 계획할 때 볼 만한 작품들입니다.</p><div id="archiveGrid" class="archiveGrid"></div><p class="archiveFoot">※ 갤러리 위치는 변경될 수 있으므로 방문 당일 작품을 눌러 공식 페이지에서 확인하세요.</p></div></section>
+<section class="dark"><div class="wrap"><div class="eyebrow" style="color:#dbc38f">On-site notes</div><h2>현장에서 덜 헤매는 법</h2><div class="practical"><div class="tip reveal"><h3>갤러리 번호를 보여주세요</h3><p>작품명보다 Gallery 157처럼 번호를 직원에게 보여주는 편이 빠릅니다.</p></div><div class="tip reveal"><h3>15:20에는 이동하세요</h3><p>클로이스터에서 작품 하나를 더 보는 것보다 본관 도착 시간을 지키는 것이 중요합니다.</p></div><div class="tip reveal"><h3>식사는 미리</h3><p>이 일정에는 카페 시간이 거의 없습니다. 2시 전에 간단히 드시고 시작하세요.</p></div></div></div></section>
+<footer><div class="wrap">작품 정보와 갤러리 위치는 The Met 공식 컬렉션을 기준으로 구성했습니다. 방문 당일 운영시간과 갤러리 폐쇄 정보를 다시 확인하세요.</div></footer>
+<script>
+const DATA={"odyssey":[{"id":254876,"title":"Terracotta neck-amphora — Menelaos reclaiming Helen","meta":"기원전 6세기경 · 그리스 도자기","room":"Gallery 155","tag":"헬레네","story":"트로이 전쟁이 끝난 뒤, 메넬라오스가 아내 헬레네를 다시 데려오는 장면입니다. 오디세이 자체의 장면이라기보다, 오디세우스가 참전했던 그 거대한 전쟁이 어떻게 끝났는지를 보여줍니다.","why":"헬레네는 트로이 전쟁의 직접적인 계기라, 전체 서사의 출발과 종착을 한 번에 연결합니다.","look":"메넬라오스의 자세와 헬레네의 몸짓에서 분노와 용서가 함께 느껴지는지 보세요.","url":"https://www.metmuseum.org/art/collection/search/254876"},{"id":247916,"title":"Terracotta pyxis — The Judgment of Paris","meta":"기원전 5세기경 · 그리스 도자기","room":"Gallery 157","tag":"전쟁의 시작","story":"파리스가 헤라, 아테나, 아프로디테 중 가장 아름다운 여신을 고르는 장면입니다. 아프로디테는 보상으로 헬레네를 약속했고 전쟁이 시작됩니다.","why":"오디세이의 모든 고난은 결국 이 선택에서 시작됩니다.","look":"작은 인물을 하나씩 찾기보다 여신들의 경쟁이라는 긴장감을 먼저 느껴보세요.","url":"https://www.metmuseum.org/art/collection/search/247916"},{"id":251812,"title":"Terracotta plaque — Eurykleia washing Odysseus’s feet","meta":"기원전 5세기경 · 그리스 테라코타 부조","room":"Gallery 157","tag":"귀환","story":"거지로 변장한 오디세우스의 발을 씻기던 유모 에우리클레이아가 흉터를 보고 그의 정체를 알아보는 순간입니다.","why":"전투보다 더 인간적이고 뭉클한 귀환의 장면입니다.","look":"몸을 굽힌 유모와 비밀을 숨기는 오디세우스 사이의 긴장에 주목하세요.","url":"https://www.metmuseum.org/art/collection/search/251812"},{"id":253053,"title":"Terracotta plaque — Odysseus returning to Penelope","meta":"기원전 5세기경 · 그리스 테라코타 부조","room":"Gallery 157","tag":"페넬로페","story":"20년에 가까운 전쟁과 방랑 끝에 오디세우스가 아내 페넬로페에게 돌아오는 장면입니다.","why":"오디세이의 진짜 결말은 모험의 승리가 아니라 집으로 돌아오는 것입니다.","look":"두 사람 사이의 거리와 시선을 보며 오랜 기다림 끝의 재회를 상상해보세요.","url":"https://www.metmuseum.org/art/collection/search/253053"},{"id":253340,"title":"Terracotta Megarian bowl — scenes from Iphigenia at Aulis","meta":"기원전 2세기경 · 그리스 도자기","room":"Gallery 161","tag":"클리타임네스트라","story":"아가멤논이 출정을 위해 딸 이피게네이아를 희생시키려 한 사건을 다룹니다.","why":"클리타임네스트라가 남편을 용서하지 못하고 복수하는 이유를 이해하게 해줍니다.","look":"작은 표면에 압축된 여러 장면을 한 편의 연극처럼 읽어보세요.","url":"https://www.metmuseum.org/art/collection/search/253340"},{"id":252960,"title":"Fragmentary marble sarcophagus with scenes from the Oresteia","meta":"로마 시대 · 대리석 부조","room":"Gallery 169","tag":"전쟁의 후유증","story":"아가멤논의 귀환과 죽음, 그리고 아들 오레스테스의 복수까지 이어지는 비극입니다.","why":"전쟁이 끝나도 가정에는 평화가 돌아오지 않았다는 사실을 보여줍니다.","look":"인물 하나보다 화면 전체의 얽힘을 보며 복수의 연쇄를 느껴보세요.","url":"https://www.metmuseum.org/art/collection/search/252960"},{"id":22896,"title":"Shield Depicting the Siege of Troy","meta":"16세기 · 금속공예","room":"Gallery 374","tag":"트로이 목마","story":"트로이 전쟁의 여러 장면과 목마가 성 안으로 들어가는 순간이 방패 위에 층층이 새겨져 있습니다.","why":"시논의 거짓말이 성공한 결과를 가장 생생하게 볼 수 있는 작품입니다.","look":"아래에서 위로 읽으며 마지막에 트로이 목마를 찾아보세요.","url":"https://www.metmuseum.org/art/collection/search/22896"},{"id":437394,"title":"Aristotle with a Bust of Homer","meta":"1653 · Rembrandt","room":"Gallery 616","tag":"호메로스","story":"아리스토텔레스가 『일리아스』와 『오디세이』의 시인 호메로스의 흉상에 손을 얹고 있습니다.","why":"앞에서 본 모든 신화 장면이 어디에서 왔는지 보여주는 이번 동선의 클라이맥스입니다.","look":"금사슬, 손의 위치, 호메로스의 표정을 함께 보며 무엇이 오래 남는지 생각해보세요.","url":"https://www.metmuseum.org/art/collection/search/437394"},{"id":436810,"title":"Telemachus and the Nymphs of Calypso","meta":"1782 · Angelica Kauffmann","room":"Gallery 627","tag":"칼립소의 후대 변주","story":"오디세우스의 아들 텔레마코스를 주인공으로 한 18세기식 고전 서사 변주입니다.","why":"오디세이가 수천 년 동안 계속 새롭게 해석되어 왔음을 보여줍니다.","look":"고대 신화를 우아하고 낭만적으로 바꾼 색과 인물 표현을 보세요.","url":"https://www.metmuseum.org/art/collection/search/436810"}],"mustsee":[{"id":547802,"title":"Temple of Dendur","artist":"Ancient Egypt","room":"Gallery 131","note":"메트의 상징과 같은 이집트 신전입니다. 유리창, 물, 사암이 만드는 공간 전체를 보세요.","url":"https://www.metmuseum.org/art/collection/search/547802"},{"id":11417,"title":"Washington Crossing the Delaware","artist":"Emanuel Leutze","room":"Gallery 760","note":"배와 인물들이 만드는 강한 대각선이 압도적인 미국 역사화입니다.","url":"https://www.metmuseum.org/art/collection/search/11417"},{"id":437881,"title":"Young Woman with a Water Pitcher","artist":"Johannes Vermeer","room":"Gallery 614","note":"창문에서 들어오는 빛과 파란색·흰색의 조화를 천천히 보세요.","url":"https://www.metmuseum.org/art/collection/search/437881"},{"id":437127,"title":"Bridge over a Pond of Water Lilies","artist":"Claude Monet","room":"Gallery 819","note":"일본식 다리와 수련 연못이 하나의 색면처럼 이어지는 편안한 피날레입니다.","url":"https://www.metmuseum.org/art/collection/search/437127"},{"id":436532,"title":"Self-Portrait with a Straw Hat","artist":"Vincent van Gogh","room":"Gallery 825","note":"짧고 방향성 강한 붓질과 노란 모자가 인상적인 자화상입니다.","url":"https://www.metmuseum.org/art/collection/search/436532"},{"id":467642,"title":"The Unicorn Rests in a Garden","artist":"South Netherlandish","room":"Cloisters Gallery 17","note":"울타리, 석류나무, 붉은 얼룩을 찾으며 신비로운 상징을 읽어보세요.","url":"https://www.metmuseum.org/art/collection/search/467642"}],"archive":[{"id":12127,"title":"Madame X","artist":"John Singer Sargent","room":"Gallery 771","note":"과감한 자세와 검은 드레스로 큰 논란을 일으킨 사전트의 대표 초상화입니다.","url":"https://www.metmuseum.org/art/collection/search/12127"},{"id":435809,"title":"The Harvesters","artist":"Pieter Bruegel the Elder","room":"Gallery 642","note":"한여름 들판의 노동과 휴식을 거대한 풍경 속에 함께 담은 걸작입니다.","url":"https://www.metmuseum.org/art/collection/search/435809"},{"id":196439,"title":"Little Fourteen-Year-Old Dancer","artist":"Edgar Degas","room":"Gallery 815","note":"이상화된 무용수가 아니라 고된 훈련을 견디는 어린 발레 연습생의 현실을 보여줍니다.","url":"https://www.metmuseum.org/art/collection/search/196439"},{"id":488978,"title":"Autumn Rhythm: Number 30, 1950","artist":"Jackson Pollock","room":"Gallery 851","restricted":true,"note":"저작권 제한으로 공개 이미지는 없지만, 가까이서는 선의 리듬을, 멀리서는 화면 전체의 에너지를 보세요.","url":"https://www.metmuseum.org/art/collection/search/488978"},{"id":436105,"title":"The Death of Socrates","artist":"Jacques Louis David","room":"Gallery 614","note":"독배를 앞두고도 철학을 설파하는 소크라테스와 흔들리는 제자들이 강하게 대비됩니다.","url":"https://www.metmuseum.org/art/collection/search/436105"},{"id":437869,"title":"Juan de Pareja","artist":"Diego Velázquez","room":"Gallery 617","note":"당당한 시선과 생생한 피부·옷감 표현으로 존엄한 한 인간을 그린 초상입니다.","url":"https://www.metmuseum.org/art/collection/search/437869"},{"id":488221,"title":"Gertrude Stein","artist":"Pablo Picasso","room":"Gallery 965","restricted":true,"note":"저작권 제한으로 공개 이미지는 없지만, 전통 초상화에서 입체주의로 넘어가는 단단한 형태를 볼 수 있습니다.","url":"https://www.metmuseum.org/art/collection/search/488221"},{"id":11122,"title":"The Gulf Stream","artist":"Winslow Homer","room":"Gallery 767","note":"거대한 바다와 작은 배의 대비 속에서 인간의 생존 의지를 보여줍니다.","url":"https://www.metmuseum.org/art/collection/search/11122"},{"id":436575,"title":"View of Toledo","artist":"El Greco","room":"Gallery 958","note":"실제 풍경을 어둡고 환상적인 도시로 재구성한 강렬한 풍경화입니다.","url":"https://www.metmuseum.org/art/collection/search/436575"},{"id":438815,"title":"The Charpentier Family","artist":"Pierre-Auguste Renoir","room":"Gallery 824","note":"아이들의 표정과 화려한 옷감, 실내 장식의 풍부한 색을 살펴보세요.","url":"https://www.metmuseum.org/art/collection/search/438815"},{"id":436947,"title":"Boating","artist":"Édouard Manet","room":"Gallery 810","note":"여름 햇빛과 물의 반사를 선명하고 평면적인 색으로 표현한 현대적인 화면입니다.","url":"https://www.metmuseum.org/art/collection/search/436947"},{"id":470314,"title":"Cuxa Cloister","artist":"Medieval France","room":"Cloisters Gallery 7","note":"분홍빛 대리석 기둥과 중앙 정원이 클로이스터 특유의 고요함을 만듭니다.","url":"https://www.metmuseum.org/art/collection/search/470314"},{"id":470599,"title":"A Knight of the d’Aluye Family","artist":"Medieval France","room":"Cloisters Gallery 9","note":"방패와 검, 얼굴 표현을 통해 중세 기사 계급의 이상을 엿볼 수 있습니다.","url":"https://www.metmuseum.org/art/collection/search/470599"},{"id":470305,"title":"The Cloisters Cross","artist":"English","room":"Cloisters Gallery 14","note":"상아 표면에 촘촘히 새긴 인물과 장면의 밀도가 압도적인 중세 공예품입니다.","url":"https://www.metmuseum.org/art/collection/search/470305"},{"id":470304,"title":"The Mérode Altarpiece","artist":"Workshop of Robert Campin","room":"Cloisters Gallery 19","note":"가정집 같은 실내에 수태고지를 배치하고 일상 사물에 상징을 숨긴 초기 네덜란드 회화입니다.","url":"https://www.metmuseum.org/art/collection/search/470304"},{"id":544227,"title":"William the Hippo","artist":"Ancient Egypt","room":"Gallery 111","note":"푸른 몸에 나일강 식물이 그려진 메트의 사랑받는 작은 하마입니다.","url":"https://www.metmuseum.org/art/collection/search/544227"},{"id":322609,"title":"Human-headed winged lion","artist":"Neo-Assyrian","room":"Gallery 401","note":"사람의 머리와 사자의 몸, 독수리 날개를 결합한 궁전 수호상입니다.","url":"https://www.metmuseum.org/art/collection/search/322609"},{"id":23947,"title":"Armor of Henry II of France","artist":"French","room":"Gallery 374","note":"신화 장면과 장식으로 뒤덮인 갑옷은 전투 장비이자 왕권의 이미지였습니다.","url":"https://www.metmuseum.org/art/collection/search/23947"},{"id":12019,"title":"Autumn Landscape","artist":"Tiffany Studios","room":"American Wing","note":"색유리 자체의 색과 질감이 회화처럼 가을 숲과 빛을 만들어냅니다.","url":"https://www.metmuseum.org/art/collection/search/12019"}]};
+const apiBase="https://collectionapi.metmuseum.org/public/collection/v1/objects/";
+const cacheKey="met-guide-object-cache-v2";
+let cache={};
+try{cache=JSON.parse(localStorage.getItem(cacheKey)||"{}")}catch{}
+
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const loadingState=()=>`<div class="imageState loading" role="status" aria-label="작품 이미지 불러오는 중"></div>`;
+const unavailableState=(restricted=false)=>`<div class="imageState failed"><div><strong>THE MET</strong><span>${restricted?"저작권 제한 · 현장에서 감상하세요":"공개 이미지 없음 · 공식 작품 페이지에서 확인"}</span></div></div>`;
+const media=(item, cls)=>`<div class="${cls}" data-object="${item.id}" data-restricted="${item.restricted?1:0}">${loadingState()}<span class="roomBadge">${esc(item.room)}</span></div>`;
+
+function render(){
+  document.getElementById("odysseyStack").innerHTML=DATA.odyssey.map((x,i)=>`
+  <article class="storyCard reveal">
+    ${media(x,"artMedia")}
+    <div class="storyCopy">
+      <div class="kicker"><span>${String(i+1).padStart(2,"0")}</span><span>${esc(x.room)}</span><span>${esc(x.tag)}</span></div>
+      <h3>${esc(x.title)}</h3><p class="meta">${esc(x.meta)}</p>
+      <div class="explain"><b>이 장면은</b><p>${esc(x.story)}</p></div>
+      <div class="twocol"><div><b>왜 볼까</b><p>${esc(x.why)}</p></div><div><b>앞에서 볼 것</b><p>${esc(x.look)}</p></div></div>
+      <a class="textLink" href="${x.url}" target="_blank" rel="noopener">The Met 공식 작품 페이지 ↗</a>
+    </div>
+  </article>`).join("");
+
+  document.getElementById("mustGrid").innerHTML=DATA.mustsee.map(x=>`
+  <a class="artCard reveal" href="${x.url}" target="_blank" rel="noopener">
+    ${media(x,"cardMedia")}
+    <div class="cardCopy"><small>${esc(x.artist)}</small><h3>${esc(x.title)}</h3><p>${esc(x.note)}</p></div>
+  </a>`).join("");
+
+  document.getElementById("archiveGrid").innerHTML=DATA.archive.map(x=>`
+  <a class="archiveCard reveal" href="${x.url}" target="_blank" rel="noopener">
+    ${media(x,"archiveMedia")}
+    <div class="archiveCopy"><h3>${esc(x.title)}</h3><p class="artist">${esc(x.artist)}</p><p class="note">${esc(x.note)}</p></div>
+  </a>`).join("");
+}
+
+async function fetchObject(id){
+  if(cache[id]) return cache[id];
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),8000);
+  let response;
+  try{response=await fetch(apiBase+id,{signal:controller.signal})}finally{clearTimeout(timer)}
+  if(!response.ok) throw new Error("object "+id);
+  const data=await response.json();
+  cache[id]=data;
+  try{localStorage.setItem(cacheKey,JSON.stringify(cache))}catch{}
+  return data;
+}
+
+function setFailure(box,restricted){
+  box.innerHTML=unavailableState(restricted)+box.querySelector(".roomBadge")?.outerHTML;
+}
+
+async function hydrateBox(box){
+  const id=box.dataset.object;
+  const restricted=box.dataset.restricted==="1";
+  const badge=box.querySelector(".roomBadge");
+  if(restricted){setFailure(box,true);return}
+  try{
+    const obj=await fetchObject(id);
+    if(obj.GalleryNumber && badge) badge.textContent="Gallery "+obj.GalleryNumber;
+    const candidates=[obj.primaryImageSmall,obj.primaryImage,...(obj.additionalImages||[])].filter(Boolean);
+    if(!candidates.length){setFailure(box,false);return}
+    let idx=0;
+    const img=new Image();
+    img.loading="lazy";
+    img.alt=obj.title||"The Met artwork";
+    img.referrerPolicy="no-referrer";
+    img.onload=()=>{
+      box.querySelector(".imageState")?.remove();
+      box.prepend(img);
+    };
+    img.onerror=()=>{
+      idx++;
+      if(idx<candidates.length) img.src=candidates[idx];
+      else setFailure(box,false);
+    };
+    img.src=candidates[idx];
+  }catch{setFailure(box,false)}
+}
+
+async function hydrateAll(){
+  const boxes=[...document.querySelectorAll("[data-object]")];
+  let cursor=0;
+  const workers=Array.from({length:6},async()=>{
+    while(cursor<boxes.length){
+      const box=boxes[cursor++];
+      await hydrateBox(box);
+    }
+  });
+  await Promise.all(workers);
+}
+
+function initReveal(){
+  const nodes=document.querySelectorAll(".reveal");
+  const observer=new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add("visible");observer.unobserve(e.target)}
+  }),{threshold:.1});
+  nodes.forEach(n=>observer.observe(n));
+}
+
+render();initReveal();hydrateAll();
+addEventListener("scroll",()=>{
+ const d=document.documentElement;
+ const max=d.scrollHeight-d.clientHeight;
+ document.getElementById("progress").style.width=(max?d.scrollTop/max*100:0)+"%";
+},{passive:true});
+</script>
+</body>
+</html>
