@@ -4,51 +4,48 @@
   "redirects": [
     {
       "source": "/met-cloisters-guide",
-      "destination": "/guide.html",
+      "destination": "/guide-v3.html",
       "permanent": false
     },
     {
       "source": "/met-cloisters-guide/:path*",
-      "destination": "/guide.html",
+      "destination": "/guide-v3.html",
       "permanent": false
     },
     {
       "source": "/met-guide",
-      "destination": "/guide.html",
+      "destination": "/guide-v3.html",
       "permanent": false
     },
     {
       "source": "/met-guide/:path*",
-      "destination": "/guide.html",
+      "destination": "/guide-v3.html",
       "permanent": false
     },
     {
       "source": "/guide-loader.html",
-      "destination": "/guide.html",
+      "destination": "/guide-v3.html",
       "permanent": false
     }
   ],
   "headers": [
     {
+      "source": "/guide-v3.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
+      ]
+    },
+    {
       "source": "/guide.html",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, max-age=0"
-        }
+        { "key": "Cache-Control", "value": "no-store, max-age=0" }
       ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        }
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     }
   ]
