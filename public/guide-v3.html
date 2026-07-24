@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f3eee4">
+  <title>The Met × The Cloisters Guide</title>
+  <style>html,body{margin:0;min-height:100%;background:#f3eee4}</style>
+</head>
+<body>
+<script>
+(async()=>{
+  try{
+    const response=await fetch('/guide.html?build=f8900f14',{cache:'no-store'});
+    if(!response.ok) throw new Error('guide '+response.status);
+    let html=await response.text();
+    html=html.replace('render();initReveal();hydrateAll();','render();initReveal();');
+    const patch=`<script>(function(){
+      function fallback(box,restricted){
+        const badge=box.querySelector('.roomBadge')?.outerHTML||'';
+        box.innerHTML='<div class="imageState"><div><strong>THE MET</strong><span>'+(restricted?'저작권 제한 · 현장에서 감상하세요':'공개 이미지 없음 · 공식 작품 페이지에서 확인')+'</span></div></div>'+badge;
+      }
+      function install(){
+        document.querySelectorAll('[data-object]').forEach(function(box){
+          const id=box.dataset.object;
+          const restricted=box.dataset.restricted==='1';
+          if(restricted){fallback(box,true);return;}
+          const badge=box.querySelector('.roomBadge')?.outerHTML||'';
+          box.innerHTML=badge;
+          const img=new Image();
+          img.alt='The Met artwork';
+          img.decoding='async';
+          img.loading=box.classList.contains('artMedia')?'eager':'lazy';
+          img.onerror=function(){fallback(box,false)};
+          img.src='/api/met-image/'+encodeURIComponent(id)+'?build=f8900f14';
+          box.prepend(img);
+        });
+      }
+      if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+    })();<\/script>`;
+    html=html.replace('</body>',patch+'</body>');
+    document.open();document.write(html);document.close();
+  }catch(error){
+    document.body.innerHTML='<main style="font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;max-width:560px;margin:18vh auto;padding:24px;color:#17211e"><h1>가이드를 열 수 없습니다</h1><p>페이지를 새로고침해 주세요.</p></main>';
+  }
+})();
+</script>
+</body>
+</html>
